@@ -21,7 +21,7 @@
 
                 <% if(comment.id_article) { %>
                     <blockquote style="margin: 0.5rem 0"
-                                onclick="apretaste.send({'command': 'TECNOLOGIA HISTORIA', 'data':{'id': '<%= comment.id_article %>'}})">
+                                onclick="apretaste.send({'command': 'NOTICIAS HISTORIA', 'data':{'id': '<%= comment.id_article %>'}})">
                         <span><%= comment.title %></span><br>
                         <span>
                             <i class="material-icons tiny">calendar_today</i> <%= moment(comment.pubDate).format('MMM D, YYYY h:mm A') %>

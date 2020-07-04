@@ -27,14 +27,13 @@ class Service
 			$request->preferredMedia = $preferredMedia;
 			$this->_medios($request, $response);
 			return;
-		}
+		} else $preferredMedia = implode(',', $preferredMedia);
 
-		$selectedMedia = $request->input->data->media ?? false;
 		$currentPage = $request->input->data->page ?? 1;
-		$mediaWhere = $selectedMedia ? "WHERE A.media_id = $selectedMedia" : "";
+		$mediaWhere = "WHERE A.media_id IN($preferredMedia)";
 		$offset = $currentPage > 1 ? ($currentPage - 1) * 20 : 0;
 
-		$totalPages = Database::queryFirst("SELECT COUNT(id) AS total FROM _news_articles")->total;
+		$totalPages = Database::queryFirst("SELECT COUNT(id) AS total FROM _news_articles WHERE media_id IN($preferredMedia)")->total;
 
 		$articles = Database::query(
 			"SELECT A.id, A.title, A.pubDate, A.author, A.image, A.imageLink, 
@@ -76,7 +75,7 @@ class Service
 		}
 
 		$content = [
-			"articles" => $articles, "selectedMedia" => $selectedMedia,
+			"articles" => $articles,
 			'isGuest' => $request->person->isGuest, 'title' => "Titulares",
 			'page' => $currentPage, 'pages' => $totalPages
 		];
