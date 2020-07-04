@@ -1,0 +1,66 @@
+<div class="col s12" id="articles">
+    <% articles.forEach(function (article) { %>
+        <div class="card"
+             onclick="apretaste.send({'command': 'NOTICIAS HISTORIA', 'data':{'id': '<%= article.id %>'}})">
+
+            <%
+                var src = "{{APP_IMAGE_PATH}}/" + article.image;
+                if (article.image == "no-image.png") src = "{{APP_SERVICE_PATH}}/images/no-image.png"
+            %>
+
+            <div class="card-image waves-effect waves-block waves-light">
+                <img src="<%= src %>">
+            </div>
+
+            <div class="card-content">
+                <span class="card-title grey-text text-darken-4"><%= article.title %></span>
+
+                <span class="chip tiny grey lighten-1">
+                    <i class="far fa-user"></i>
+                    <%= article.author %>
+                </span>
+                <span class="chip tiny grey lighten-1">
+                    <i class="far fa-newspaper"></i>
+                    <%= article.mediaCaption %>
+                </span>
+                <span class="chip tiny grey lighten-1">
+                    <i class="far fa-comments"></i>
+                    <%= article.comments %>
+                </span>
+                <span class="chip tiny grey lighten-1">
+                    <i class="far fa-calendar"></i>
+                    <%= moment(article.pubDate).format('MMM D, YYYY h:mm A') %>
+                </span>
+
+                <% article.tags.forEach(function (tag) { %>
+                    <span class="chip tiny"><%= tag %></span>
+                <% }) %>
+            </div>
+        </div>
+    <% }) %>
+
+    <!-- PAGINATION -->
+    <% if(pages > 1) { %>
+        <div class="row">
+            <div class="col s12 center-align">
+                <ul class="pagination">
+                    <% if(page > 1){ %>
+                        <li class="waves-effect">
+                            <a onclick="apretaste.send({command: 'noticias', data: {page: page-1}})">
+                                <i class="material-icons">chevron_left</i>
+                            </a>
+                        </li>
+                    <% } %>
+                    <li class="waves-effect"><%= page %> / <%= pages %></li>
+                    <% if(page < pages){ %>
+                        <li class="waves-effect">
+                            <a onclick="apretaste.send({command: 'noticias', data: {page: page+1}})">
+                                <i class="material-icons">chevron_right</i>
+                            </a>
+                        </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    <% } %>
+</div>

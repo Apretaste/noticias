@@ -1,0 +1,9 @@
+{
+  "name": "noticias",
+  "caption": "Noticias",
+  "description": "Noticias de todas las categorias, en un solo lugar",
+  "category": "informativo",
+  "creator": "ricardo@apretaste.org",
+  "listed": true,
+  "guest": true
+}

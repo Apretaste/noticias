@@ -1,0 +1,119 @@
+<div class="col s12" id="article">
+    <h3 style="color: #303d44"><%= title %></h3>
+
+    <% if(image != ""){ %>
+        <div class="center-align">
+            <img class="responsive-img" width="100%" src="{{APP_IMAGE_PATH}}<%= image %>"><br>
+        </div>
+        <span> <%= imageCaption %> </span>
+    <% } %>
+
+    <% if(description.substr(0, 100) != content.split("\\n\\n")[0].substr(0, 100)) { %>
+        <blockquote><%= description %></blockquote>
+    <% } %>
+
+    <section>
+        <% content.split("\\n\\n").forEach(function(paragraph){ %>
+            <p><%= paragraph %></p>
+        <% }) %>
+    </section>
+
+    <ul class="collection one-line">
+        <% if(author != ''){ %>
+            <li class="collection-item avatar">
+                <i class="tiny material-icons circle">person</i>
+                <span class="title"><%= author %></span>
+                <p class="blue-grey-text">Author</p>
+            </li>
+        <% } %>
+
+        <li class="collection-item avatar">
+            <i class="far fa-newspaper circle"></i>
+            <span class="title"><%= moment(pubDate).format('MMM D, YYYY h:mm A') %></span>
+            <p class="blue-grey-text">Fecha de publicación</p>
+        </li>
+        <li class="collection-item avatar">
+            <i class="far fa-newspaper circle"></i>
+            <span class="title"><%= source %></span>
+            <p class="blue-grey-text">Medio de prensa</p>
+            <a onclick="apretaste.send({command: 'noticias', data: {media: media_id}})"
+               class="secondary-content">
+                <i class="material-icons">arrow_forward</i>
+            </a>
+        </li>
+
+        <% if(categoryCaption != null){ %>
+            <li class="collection-item avatar">
+                <i class="fas fa-tag circle"></i>
+                <span class="title">Política</span>
+                <p class="blue-grey-text">Categoría</p>
+                <a onclick="apretaste.send({command: 'noticias', data: {category: category_id}})"
+                   class="secondary-content"><i class="material-icons">arrow_forward</i></a>
+            </li>
+        <% } %>
+    </ul>
+</div>
+
+<div class="col s12">
+    <span class="left" style="font-weight: 500">
+        <i class="material-icons tiny">comment</i>
+        <span id="commentsCounter"><%= comments.length %></span>
+        Comentarios
+    </span>
+
+    <span class="right">
+        <i class="material-icons"
+           onclick="apretaste.send({'command': 'NOTICIAS HISTORIA', 'data':{'id': '<%= id %>', 'ts': Date.now()}})">autorenew</i>
+    </span>
+
+    <br>
+
+    <ul class="chat" id="comments">
+        <% comments.forEach(function(comment) { %>
+            <li class="<%= comment.position %>" id="<%= comment.id %>">
+                <div class="person-avatar circle" face="<%= comment.avatar %>" color="<%= comment.avatarColor %>"
+                     size="30" onclick="openProfile('<%= comment.username %>')"></div>
+                <div class="head">
+                    <a onclick="openProfile('<%= comment.username %>')"
+                       class="<%= comment.gender %>">@<%= comment.username %></a>
+                    <span class="date"><%= moment(comment.inserted).format('MMM D, YYYY h:mm A') %></span>
+                </div>
+                <span class="text"><%= comment.content %></span>
+            </li>
+        <% }) %>
+    </ul>
+
+    <% if(comments.length == 0 && !isGuest) { %>
+        <div class="col s12" id="no-comments">Sé el primero en comentar</div>
+    <% } %>
+
+    <a onclick="toggleWriteModal()" class="waves-effect waves-light btn modal-trigger green" style="margin:10px 20px">
+        <i class="material-icons left">add</i> Comentar
+    </a>
+</div>
+
+<% if (isGuest){ %>
+    <div class="col s12 red-text" style="font-weight: 500">Inicie sesión para comentar</div>
+<% } %>
+
+<% if(!isGuest) { %>
+    <div id="writeModal" class="container" status="closed" style="display: none;">
+        <div class="row">
+            <i class="material-icons small" onclick="toggleWriteModal()">close</i>
+            <div class="col s12">
+            <textarea id="comment" class="materialize-textarea" maxlength="250"
+                      placeholder="¿En qué piensas?"></textarea>
+            </div>
+
+            <div class="actions">
+                <i class="material-icons small right" onclick="sendComment()">send</i>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large" onclick="apretaste.back()">
+            <i class="large material-icons">arrow_back</i>
+        </a>
+    </div>
+<% } %>
