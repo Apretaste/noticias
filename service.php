@@ -10,6 +10,11 @@ use Framework\Database;
 
 class Service
 {
+	public static array $mediaTypes = [
+		'politics' => 'Política', 'economy' => 'Economía', 'cultural' => 'Cultura',
+		'fashion' => 'Moda', 'technology' => 'Tecnología', 'science' => 'Ciencia', 'other' => 'Otros'
+	];
+
 	// TODO add https://es.digitaltrends.com/fuentes-rss/
 
 	/**
@@ -33,9 +38,45 @@ class Service
 		$mediaWhere = "WHERE A.media_id IN($preferredMedia)";
 		$offset = $currentPage > 1 ? ($currentPage - 1) * 20 : 0;
 
-		$totalPages = Database::queryFirst("SELECT COUNT(id) AS total FROM _news_articles WHERE media_id IN($preferredMedia)")->total;
+		$totalPages = 1;
 
-		$articles = Database::query(
+		$search = $request->input->data->search ?? false;
+
+		if ($search && !empty($search)) {
+			$mediaWhere = "WHERE 1 ";
+			if (isset($search->media) && isset($search->type)) unset($search->type);
+			foreach ($search as $field => $value) {
+				switch ($field) {
+					case 'title':
+						$value = preg_replace('!\s+!', ' ', $value);
+						$value = quoted_printable_encode($value);
+						$escapedTitle = Database::escape($value);
+						$escapedTitle = implode(', ', explode(' ', $escapedTitle));
+
+						$mediaWhere .= "AND MATCH(`title`) AGAINST('$escapedTitle') ";
+						break;
+					case 'media':
+						$mediaWhere .= "AND A.media_id = '$value' ";
+						break;
+					case 'minDate':
+						$mediaWhere .= "AND A.pubDate >= STR_TO_DATE('$value','%d/%m/%Y') ";
+						break;
+					case 'maxDate':
+						$mediaWhere .= "AND A.pubDate <= STR_TO_DATE('$value','%d/%m/%Y') ";
+						break;
+					case 'minComments':
+						$mediaWhere .= "AND A.comments >= '$value' ";
+						break;
+					case 'type':
+						$mediaWhere .= "AND A.type = '$value' ";
+						break;
+				}
+			}
+		} else {
+			$totalPages = Database::queryFirst("SELECT COUNT(id) AS total FROM _news_articles WHERE media_id IN($preferredMedia)")->total;
+		}
+
+		$articles = Database::queryCache(
 			"SELECT A.id, A.title, A.pubDate, A.author, A.image, A.imageLink, 
 				A.description, A.comments, A.tags, B.name AS mediaName, B.caption AS mediaCaption, C.caption AS categoryCaption
 				FROM _news_articles A LEFT JOIN _news_media B ON A.media_id = B.id 
@@ -74,24 +115,25 @@ class Service
 			}
 		}
 
+		// Search info
+		$availableMedia = Database::queryCache("SELECT id, caption, `type` FROM _news_media");
+
+		/*foreach ($availableMedia as $media) { // To search in specific media categories
+			$categories = Database::queryCache("SELECT id, caption FROM _news_categories WHERE media_id={$media->id}");
+			$media->categories = $categories;
+		}*/
+
 		$content = [
 			"articles" => $articles,
 			'isGuest' => $request->person->isGuest, 'title' => "Titulares",
-			'page' => $currentPage, 'pages' => $totalPages
+			'page' => $currentPage, 'pages' => $totalPages,
+			'availableMedia' => $availableMedia, 'mediaTypes' => self::$mediaTypes
 		];
 
 		// send data to the view
 		$response->setCache(60);
 		$response->setLayout('noticias.ejs');
 		$response->setTemplate("stories.ejs", $content, $images);
-	}
-
-	private static function toEspMonth(string $date)
-	{
-		$months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-		$espMonths = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-
-		return str_replace($months, $espMonths, $date);
 	}
 
 	/**
@@ -168,11 +210,7 @@ class Service
 		}
 
 		$preferredMedia = $request->emptyMedia ?? self::getSelectedMedia($request->person);
-		$availableMedia = Database::query("SELECT * FROM _news_media");
-		$mediaTypes = [
-			'politics' => 'Política', 'economy' => 'Economía', 'cultural' => 'Cultura',
-			'fashion' => 'Moda', 'technology' => 'Tecnología', 'science' => 'Ciencia', 'other' => 'Otros'
-		];
+		$availableMedia = Database::queryCache("SELECT * FROM _news_media");
 
 		$images = [];
 		foreach ($availableMedia as $media) {
@@ -182,7 +220,7 @@ class Service
 		$content = [
 			'availableMedia' => $availableMedia,
 			'preferredMedia' => $preferredMedia,
-			'mediaTypes' => $mediaTypes,
+			'mediaTypes' => self::$mediaTypes,
 			'title' => 'Medios'
 		];
 
@@ -239,8 +277,10 @@ class Service
 			"isGuest" => $request->person->isGuest,
 			'barTitle' => "Comentarios",
 			'username' => $request->person->username,
+			'gender' => $request->person->gender,
 			'avatar' => $request->person->avatar,
-			'avatarColor' => $request->person->avatarColor
+			'avatarColor' => $request->person->avatarColor,
+			'title' => 'Comentarios'
 		];
 
 		// send info to the view

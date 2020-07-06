@@ -9,6 +9,9 @@ $(function () {
 	$('select').formSelect();
 	$('.tabs').tabs();
 
+	setDatePicker('#minDate', onSelectMinDate);
+	setDatePicker('#maxDate', onSelectMaxDate);
+
 	$('#sources').change(function (event) {
 		var selected = $('#sources option:selected').val();
 		return apretaste.send({
@@ -19,6 +22,35 @@ $(function () {
 
 	emptyPreferences = typeof preferredMedia != "undefined" && preferredMedia.length == 0;
 });
+
+function onSelectMinDate(value) {
+	setDatePicker('#maxDate', onSelectMaxDate, value);
+}
+
+function onSelectMaxDate(value) {
+	setDatePicker('#minDate', onSelectMinDate, null, value);
+}
+
+function setDatePicker(id, onSelect, minDate, maxDate = new Date()) {
+	var internationalization = {
+		months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+			'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+		weekdaysAbbrev: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+		weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']
+	};
+
+	$(id).datepicker({
+		autoClose: true,
+		format: 'dd/mm/yyyy',
+		yearRange: [2020, (new Date()).getFullYear()],
+		minDate: minDate,
+		maxDate: maxDate,
+		firstDay: 1,
+		i18n: internationalization,
+		onSelect: onSelect,
+	});
+}
 
 // Main functions
 
@@ -42,13 +74,56 @@ function toggleWriteModal() {
 	}
 }
 
-function getRandomColor() {
-	var letters = '0123456789ABCDEF';
-	var color = '#';
-	for (var i = 0; i < 6; i++) {
-		color += letters[Math.floor(Math.random() * 16)];
+function toggleSearchModal() {
+	var status = $('#searchModal').attr('status');
+
+	if (status == "closed") {
+		if ($('.container:not(#searchModal) > .navbar-fixed').length == 1) {
+			var h = $('.container:not(#searchModal) > .navbar-fixed')[0].clientHeight + 1;
+			$('#searchModal').css('height', 'calc(100% - ' + h + 'px)');
+		}
+
+		$('#searchModal').slideToggle({
+			direction: "up"
+		}).attr('status', 'opened');
+		$('#title').focus();
+	} else {
+		$('#searchModal').slideToggle({
+			direction: "up"
+		}).attr('status', 'closed');
 	}
-	return color;
+}
+
+function filterMedia(value) {
+	var options = '<option value="all" selected>Todos</option>\n';
+	var mediaSelect = $('#media');
+
+	availableMedia.forEach(function (media) {
+		if (value === 'all' || media.type === value) {
+			options += '<option value="' + media.id + '" selected>' + media.caption + '</option>\n';
+		}
+	});
+
+	mediaSelect.html(options);
+
+	mediaSelect.formSelect();
+}
+
+function searchArticles() {
+	// array of possible values
+	var names = ['title', 'media', 'type', 'minDate', 'maxDate', 'minComments'];
+
+	// create object to send to the backend
+	var data = {};
+	names.forEach(function (prop) {
+		if ($('#' + prop).val() != null && $('#' + prop).val() != "") {
+			data[prop] = $('#' + prop).val();
+		}
+	});
+
+	apretaste.send({
+		command: 'noticias', data: {search: data}
+	})
 }
 
 function openProfile(username) {
@@ -143,17 +218,36 @@ function sendComment() {
 // Callback functions
 
 function sendCommentCallback(comment) {
-	var element =
-		"<li class=\"right\" id=\"last\">\n" +
-		"    <div class=\"person-avatar circle\" face=\"" + avatar + "\" color=\"" + avatarColor + "\"\n" +
-		"         size=\"30\" onclick=\"openProfile('" + username + "')\"></div>\n" +
-		"    <div class=\"head\">\n" +
-		"        <a onclick=\"openProfile('" + username + "')\"\n" +
-		"           class=\"" + gender + "\">@" + username + "</a>\n" +
-		"        <span class=\"date\">" + moment().format('MMM D, YYYY h:mm A') + "</span>\n" +
-		"    </div>\n" +
-		"    <span class=\"text\">" + comment + "</span>\n" +
-		"</li>"
+	var element;
+
+	if (title === 'Comentarios') {
+		element = "<div class=\"card\" id=\"last\">\n" +
+			"            <div class=\"card-person grey lighten-5\">\n" +
+			"                <div class=\"person-avatar circle left\" face=\"" + avatar + "\" color=\"" + avatarColor + "\"\n" +
+			"                     size=\"30\"></div>\n" +
+			"                <a href=\"#!\" class=\"" + gender + "\"\n" +
+			"                   onclick=\"openProfile('" + username + "')\">@" + username + "</a>\n" +
+			"                <div class=\"right\">\n" +
+			"                    <i class=\"material-icons ultra-tiny\">calendar_today</i> " + moment().format('MMM D, h:mm A') + "\n" +
+			"                </div>\n" +
+			"            </div>\n" +
+			"            <div class=\"card-content\" style=\"padding: 0.75rem\">\n" +
+			"                <p>" + comment + "</p>\n" +
+			"            </div>\n" +
+			"        </div>"
+	} else {
+		element =
+			"<li class=\"right\" id=\"last\">\n" +
+			"    <div class=\"person-avatar circle\" face=\"" + avatar + "\" color=\"" + avatarColor + "\"\n" +
+			"         size=\"30\" onclick=\"openProfile('" + username + "')\"></div>\n" +
+			"    <div class=\"head\">\n" +
+			"        <a onclick=\"openProfile('" + username + "')\"\n" +
+			"           class=\"" + gender + "\">@" + username + "</a>\n" +
+			"        <span class=\"date\">" + moment().format('MMM D, YYYY h:mm A') + "</span>\n" +
+			"    </div>\n" +
+			"    <span class=\"text\">" + comment + "</span>\n" +
+			"</li>"
+	}
 
 	$('#no-comments').remove();
 
@@ -224,18 +318,6 @@ Date.prototype.nowFormated = function () {
 };
 
 /**/
-
-function sendSearch() {
-	var query = $('#query').val().trim();
-	if (query.length >= 3) {
-		apretaste.send({
-			'command': 'NOTICIAS BUSCAR',
-			'data': {query: query}
-		});
-	} else {
-		M.toast({html: 'Inserte mínimo 3 caracteres'});
-	}
-}
 
 String.prototype.replaceAll = function (search, replacement) {
 	return this.split(search).join(replacement);

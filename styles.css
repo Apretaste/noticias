@@ -22,7 +22,7 @@
     font-size: 8px;
 }
 
-.select-wrapper {
+.select-wrapper:not(.select-month):not(.select-year) {
     border: 1px solid lightgray;
     border-radius: 6px;
     box-shadow: 0 0 3px lightgrey;
@@ -39,7 +39,7 @@
     padding: 10px 12px;
 }
 
-#writeModal {
+#writeModal, #searchModal {
     position: fixed;
     bottom: 0;
     z-index: 999;
@@ -53,15 +53,15 @@
     box-shadow: none;
 }
 
-#writeModal > .row {
+#writeModal > .row, #searchModal > .row {
     height: 100%;
 }
 
-#writeModal > .row > .col {
+#writeModal > .row > .col, #searchModal .row > .col {
     height: calc(100% - 40px);
 }
 
-#writeModal > .row > i:first-child {
+#writeModal > .row > i:first-child, #searchModal > .row > i:first-child {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -72,6 +72,13 @@
     width: 100%;
     padding: 10px;
     bottom: 0;
+}
+
+#searchModal .actions {
+    position: absolute;
+    width: 100%;
+    right: 23px;
+    bottom: 23px;
 }
 
 #comments .circle {
