@@ -78,7 +78,7 @@ class Service
 			$totalPages = intval($totalPages / 20) + ($totalPages % 20 > 0 ? 1 : 0);;
 		}
 
-		$articles = Database::query(
+		$articles = Database::queryCache(
 			"SELECT A.id, A.title, A.pubDate, A.author, A.image, A.imageLink, 
 				A.description, A.comments, A.tags, B.name AS mediaName, B.caption AS mediaCaption, C.caption AS categoryCaption
 				FROM _news_articles A LEFT JOIN _news_media B ON A.media_id = B.id 
@@ -161,7 +161,7 @@ class Service
 		$id = $request->input->data->id ?? false;
 
 		if ($id) {
-			$article = Database::query("SELECT A.*, B.caption AS source, B.name AS mediaName, C.caption AS categoryCaption FROM _news_articles A LEFT JOIN _news_media B ON A.media_id = B.id LEFT JOIN _news_categories C ON A.category_id = C.id WHERE A.id='$id'")[0];
+			$article = Database::queryCache("SELECT A.*, B.caption AS source, B.name AS mediaName, C.caption AS categoryCaption FROM _news_articles A LEFT JOIN _news_media B ON A.media_id = B.id LEFT JOIN _news_categories C ON A.category_id = C.id WHERE A.id='$id'")[0];
 
 			$article->title = quoted_printable_decode($article->title);
 			$article->description = quoted_printable_decode($article->description);
@@ -174,7 +174,7 @@ class Service
 				$comment->position = $comment->id_person == $request->person->id ? 'right' : 'left';
 			}
 
-			$article->similars = Database::query("SELECT id, title, tags FROM _news_articles WHERE MATCH(`tags`) AGAINST('{$article->tags}') AND id <> {$article->id} LIMIT 3");
+			$article->similars = Database::queryCache("SELECT id, title, tags FROM _news_articles WHERE MATCH(`tags`) AGAINST('{$article->tags}') AND id <> {$article->id} LIMIT 3");
 
 			foreach ($article->similars as $similar) {
 				$similar->title = quoted_printable_decode($similar->title);
