@@ -7,14 +7,13 @@
             </div>
         <% } %>
 
-        <div class="input-field" style="margin-top: 2rem">
+        <div class="input-field outline" style="margin-top: 2rem">
             <select onchange="select(value)">
                 <option value="all">Todos</option>
                 <% Object.keys(mediaTypes).forEach(function(key){ %>
                     <option value="<%= key %>"><%= mediaTypes[key] %></option>
                 <% }) %>
             </select>
-            <label>Tipo de medio</label>
         </div>
 
         <% availableMedia.forEach(function (media) { %>

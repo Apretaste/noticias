@@ -1,39 +1,45 @@
 <div class="col s12" id="articles">
+    <% if(articles.length == 0){ %>
+        <p class="middle-center center grey-text">No hemos encontrado articulos con tus parametros de busqueda.</p>
+    <% } %>
+
     <% articles.forEach(function (article) { %>
         <div class="card"
              onclick="apretaste.send({'command': 'NOTICIAS HISTORIA', 'data':{'id': '<%= article.id %>'}})">
 
-            <%
+            <% if(article.image != null){
                 var src = "{{APP_IMAGE_PATH}}/" + article.image;
                 if (article.image == "no-image.png") src = "{{APP_SERVICE_PATH}}/images/no-image.png"
             %>
-
             <div class="card-image waves-effect waves-block waves-light">
                 <img src="<%= src %>">
             </div>
+            <% } %>
 
             <div class="card-content">
                 <span class="card-title grey-text text-darken-4"><%= article.title %></span>
 
-                <span class="chip tiny grey lighten-1">
+                <% if(article.author != ''){ %>
+                    <span class="chip grey lighten-1">
                     <i class="far fa-user"></i>
                     <%= article.author %>
                 </span>
-                <span class="chip tiny grey lighten-1">
+                <% } %>
+                <span class="chip grey lighten-1">
                     <i class="far fa-newspaper"></i>
                     <%= article.mediaCaption %>
                 </span>
-                <span class="chip tiny grey lighten-1">
+                <span class="chip grey lighten-1">
                     <i class="far fa-comments"></i>
                     <%= article.comments %>
                 </span>
-                <span class="chip tiny grey lighten-1">
+                <span class="chip grey lighten-1">
                     <i class="far fa-calendar"></i>
                     <%= moment(article.pubDate).format('MMM D, YYYY h:mm A') %>
                 </span>
 
                 <% article.tags.forEach(function (tag) { %>
-                    <span class="chip tiny"><%= tag %></span>
+                    <span class="chip"><%= tag %></span>
                 <% }) %>
             </div>
         </div>
@@ -87,7 +93,7 @@
                         <option value="<%= key %>"><%= mediaTypes[key] %></option>
                     <% }) %>
                 </select>
-                <label for="type">Categoria</label>
+                <label for="type">Categoría</label>
             </div>
 
             <div class="input-field">
@@ -102,7 +108,7 @@
 
             <div class="input-field">
                 <input id="minComments" type="number">
-                <label for="minComments">Comentarios minimos</label>
+                <label for="minComments">Comentarios mínimos</label>
             </div>
 
             <div class="input-field">
@@ -112,7 +118,7 @@
 
             <div class="input-field">
                 <input id="minDate" type="text" class="datepicker">
-                <label for="minDate">Publicado despues de</label>
+                <label for="minDate">Publicado después de</label>
             </div>
 
             <a class="waves-effect waves-light btn" onclick="searchArticles()">

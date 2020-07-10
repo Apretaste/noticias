@@ -28,6 +28,7 @@ class Service
 	public function _main(Request $request, Response &$response)
 	{
 		$preferredMedia = self::getSelectedMedia($request->person);
+
 		if (empty($preferredMedia)) {
 			$request->preferredMedia = $preferredMedia;
 			$this->_medios($request, $response);
@@ -74,9 +75,10 @@ class Service
 			}
 		} else {
 			$totalPages = Database::queryFirst("SELECT COUNT(id) AS total FROM _news_articles WHERE media_id IN($preferredMedia)")->total;
+			$totalPages = intval($totalPages / 20) + ($totalPages % 20 > 0 ? 1 : 0);;
 		}
 
-		$articles = Database::queryCache(
+		$articles = Database::query(
 			"SELECT A.id, A.title, A.pubDate, A.author, A.image, A.imageLink, 
 				A.description, A.comments, A.tags, B.name AS mediaName, B.caption AS mediaCaption, C.caption AS categoryCaption
 				FROM _news_articles A LEFT JOIN _news_media B ON A.media_id = B.id 
@@ -93,23 +95,26 @@ class Service
 			$article->title = quoted_printable_decode($article->title);
 			$article->description = quoted_printable_decode($article->description);
 			$article->author = quoted_printable_decode($article->author);
-
 			$article->tags = $article->tags ? explode(',', $article->tags) : [];
 
 			if (!$inCuba) {
-				$imgPath = "$techImgDir/{$article->mediaName}/images/{$article->image}";
+				if ($article->image) {
+					$imgPath = "$techImgDir/{$article->mediaName}/images/{$article->image}";
 
-				if (!file_exists($imgPath)) {
-					$image = Crawler::get($article->imageLink, 'GET', null, [], [], $info);
+					if (!file_exists($imgPath)) {
+						$image = Crawler::get($article->imageLink, 'GET', null, [], [], $info);
 
-					if ($info['http_code'] ?? 404 === 200)
-						if (!empty($image))
-							file_put_contents($imgPath, $image);
-				} else {
-					$image = file_get_contents($imgPath);
+						if ($info['http_code'] ?? 404 === 200)
+							if (!empty($image))
+								file_put_contents($imgPath, $image);
+					} else {
+						$image = file_get_contents($imgPath);
+					}
+
+					if (!empty($image)) $images[] = $imgPath;
 				}
 
-				if (!empty($image)) $images[] = $imgPath;
+
 			} else {
 				$article->image = "no-image.png";
 			}
@@ -169,6 +174,23 @@ class Service
 				$comment->position = $comment->id_person == $request->person->id ? 'right' : 'left';
 			}
 
+			$article->similars = Database::query("SELECT id, title, tags FROM _news_articles WHERE MATCH(`tags`) AGAINST('{$article->tags}') AND id <> {$article->id} LIMIT 3");
+
+			foreach ($article->similars as $similar) {
+				$similar->title = quoted_printable_decode($similar->title);
+
+				// To lower and without tildes
+				$similar->tags = preg_replace('/&([^;])[^;]*;/', "$1", htmlentities(mb_strtolower($similar->tags), null));
+				$article->tags = preg_replace('/&([^;])[^;]*;/', "$1", htmlentities(mb_strtolower($article->tags), null));;
+
+				$similarTags = array_intersect(explode(',', $article->tags), explode(',', $similar->tags));
+
+				$similar->tags = [];
+				foreach ($similarTags as $tag) {
+					$similar->tags[] = ucfirst($tag);
+				}
+			}
+
 			$article->isGuest = $request->person->isGuest;
 			$article->barTitle = "Noticias";
 			$article->username = $request->person->username;
@@ -181,7 +203,7 @@ class Service
 			// get the image if exist
 			$source = str_replace(' ', '_', $article->source);
 			$techImgDir = SHARED_PUBLIC_PATH . 'content/news';
-			if (!empty($article->image)) $images[] = "$techImgDir/{$source}/{$article->image}";
+			if (!empty($article->image)) $images[] = "$techImgDir/{$source}/images/{$article->image}";
 
 			// send info to the view
 			$response->setCache('30');
@@ -207,6 +229,7 @@ class Service
 
 		if ($preferredMedia !== false) {
 			self::saveSelectedMedia($request->person, $preferredMedia);
+			return;
 		}
 
 		$preferredMedia = $request->emptyMedia ?? self::getSelectedMedia($request->person);

@@ -112,14 +112,22 @@ function filterMedia(value) {
 function searchArticles() {
 	// array of possible values
 	var names = ['title', 'media', 'type', 'minDate', 'maxDate', 'minComments'];
+	var hasData = false;
 
 	// create object to send to the backend
 	var data = {};
 	names.forEach(function (prop) {
-		if ($('#' + prop).val() != null && $('#' + prop).val() != "") {
+		var prop = $('#' + prop).val();
+		if (prop != null && prop !== "" && prop !== "all") {
 			data[prop] = $('#' + prop).val();
+			hasData = true;
 		}
 	});
+
+	if (!hasData) {
+		showToast('Ingrese algún parametro de busqueda')
+		return;
+	}
 
 	apretaste.send({
 		command: 'noticias', data: {search: data}
@@ -151,17 +159,24 @@ function togglePreferredMedia(checkbox) {
 }
 
 function savePreferredMedia() {
-	apretaste.send({
-		command: 'noticias medios',
-		data: {
-			preferredMedia: preferredMedia
-		},
-		redirect: emptyPreferences,
-		callback: {
-			name: 'showToast',
-			data: 'Pereferencias guardadas'
-		}
-	})
+	if (preferredMedia.length > 0) {
+		apretaste.send({
+			command: 'noticias medios',
+			data: {
+				preferredMedia: preferredMedia
+			},
+			redirect: false,
+			callback: {
+				name: 'savePreferredMediaCallback'
+			}
+		})
+	} else {
+		showToast('Debe seleccionar al menos un medio');
+	}
+}
+
+function savePreferredMediaCallback() {
+	apretaste.send({command: 'noticias'});
 }
 
 function showToast(text) {

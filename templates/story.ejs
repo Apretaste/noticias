@@ -1,14 +1,14 @@
 <div class="col s12" id="article">
     <h3 style="color: #303d44"><%= title %></h3>
 
-    <% if(image != ""){ %>
-        <div class="center-align">
-            <img class="responsive-img" width="100%" src="{{APP_IMAGE_PATH}}<%= image %>"><br>
+    <% if(image != null){ %>
+        <div class="article-image"
+             style="background-image: url('{{APP_IMAGE_PATH}}<%= image %>');">
         </div>
         <span> <%= imageCaption %> </span>
     <% } %>
 
-    <% if(description.substr(0, 100) != content.split("\\n\\n")[0].substr(0, 100)) { %>
+    <% if(description.trim().substr(0, 100) != content.split("\\n\\n")[0].substr(0, 100)) { %>
         <blockquote><%= description %></blockquote>
     <% } %>
 
@@ -42,7 +42,7 @@
             </a>
         </li>
 
-        <% if(categoryCaption != null){ %>
+        <% if(typeof categoryCaption != "undefined" && categoryCaption != null){ %>
             <li class="collection-item avatar">
                 <i class="fas fa-tag circle"></i>
                 <span class="title">Política</span>
@@ -52,6 +52,22 @@
             </li>
         <% } %>
     </ul>
+</div>
+
+<div class="row">
+    <!--div class="col s12"><h5>Artículos simílares</h5></div-->
+    <% similars.forEach(function (similar) { %>
+        <div class="col s4" onclick="apretaste.send({command: 'noticias historia', data: {id: '<%= similar.id %>'}})">
+            <div class="card user-card">
+                <div class="content">
+                    <p class="related-title"><%= similar.title %></p>
+                    <% similar.tags.forEach(function (similarTag) { %>
+                        <span class="chip tiny"><%= similarTag %></span>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+    <% }) %>
 </div>
 
 <div class="col s12">
