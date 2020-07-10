@@ -161,7 +161,7 @@ class Service
 		$id = $request->input->data->id ?? false;
 
 		if ($id) {
-			$article = Database::query("SELECT A.*, B.caption AS source, C.caption AS categoryCaption FROM _news_articles A LEFT JOIN _news_media B ON A.media_id = B.id LEFT JOIN _news_categories C ON A.category_id = C.id WHERE A.id='$id'")[0];
+			$article = Database::query("SELECT A.*, B.caption AS source, B.name AS mediaName, C.caption AS categoryCaption FROM _news_articles A LEFT JOIN _news_media B ON A.media_id = B.id LEFT JOIN _news_categories C ON A.category_id = C.id WHERE A.id='$id'")[0];
 
 			$article->title = quoted_printable_decode($article->title);
 			$article->description = quoted_printable_decode($article->description);
@@ -201,9 +201,8 @@ class Service
 			$images = [];
 
 			// get the image if exist
-			$source = str_replace(' ', '_', $article->source);
 			$techImgDir = SHARED_PUBLIC_PATH . 'content/news';
-			if (!empty($article->image)) $images[] = "$techImgDir/{$source}/images/{$article->image}";
+			if (!empty($article->image)) $images[] = "$techImgDir/{$article->mediaName}/images/{$article->image}";
 
 			// send info to the view
 			$response->setCache('30');
