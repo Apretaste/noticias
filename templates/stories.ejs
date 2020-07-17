@@ -1,7 +1,11 @@
 <div class="col s12" id="articles">
     <% if(articles.length == 0){ %>
-        <p class="middle-center center grey-text">No hemos encontrado articulos con tus parametros de busqueda.</p>
+        <p class="middle-center center grey-text">No hemos encontrado articulos con tus parámetros de búsqueda.</p>
     <% } %>
+
+    <% searchTags.forEach(function (tag) { %>
+        <span class="chip tiny"><%= tag %></span>
+    <% }) %>
 
     <% articles.forEach(function (article) { %>
         <div class="card"
@@ -20,26 +24,26 @@
                 <span class="card-title grey-text text-darken-4"><%= article.title %></span>
 
                 <% if(article.author != ''){ %>
-                    <span class="chip grey lighten-1">
+                    <span class="chip tiny grey lighten-1">
                     <i class="far fa-user"></i>
                     <%= article.author %>
                 </span>
                 <% } %>
-                <span class="chip grey lighten-1">
+                <span class="chip tiny grey lighten-1">
                     <i class="far fa-newspaper"></i>
                     <%= article.mediaCaption %>
                 </span>
-                <span class="chip grey lighten-1">
+                <span class="chip tiny grey lighten-1">
                     <i class="far fa-comments"></i>
                     <%= article.comments %>
                 </span>
-                <span class="chip grey lighten-1">
+                <span class="chip tiny grey lighten-1">
                     <i class="far fa-calendar"></i>
                     <%= moment(article.pubDate).format('MMM D, YYYY h:mm A') %>
                 </span>
 
                 <% article.tags.forEach(function (tag) { %>
-                    <span class="chip"><%= tag %></span>
+                    <span class="chip tiny"><%= tag %></span>
                 <% }) %>
             </div>
         </div>
@@ -71,7 +75,7 @@
     <% } %>
 
     <div class="fixed-action-btn">
-        <a class="btn-floating btn-large" onclick="toggleSearchModal()">
+        <a class="btn-floating btn-large green" onclick="toggleSearchModal()">
             <i class="large material-icons">search</i>
         </a>
     </div>

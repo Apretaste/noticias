@@ -117,15 +117,15 @@ function searchArticles() {
 	// create object to send to the backend
 	var data = {};
 	names.forEach(function (prop) {
-		var prop = $('#' + prop).val();
-		if (prop != null && prop !== "" && prop !== "all") {
-			data[prop] = $('#' + prop).val();
+		var value = $('#' + prop).val();
+		if (value != null && value !== "" && value !== "all") {
+			data[prop] = value;
 			hasData = true;
 		}
 	});
 
 	if (!hasData) {
-		showToast('Ingrese algún parametro de busqueda')
+		showToast('Ingrese algún parámetro de búsqueda');
 		return;
 	}
 

@@ -104,14 +104,6 @@
     bottom: -3px;
 }
 
-.row {
-    margin-bottom: 0px;
-}
-
-.grey-ddc {
-    color: #666666;
-}
-
 .material-icons.ultra-tiny {
     position: relative;
     top: 1px;
@@ -184,6 +176,13 @@ p {
 
 .chip.tiny .icon {
     line-height: 20px;
+}
+
+.chip.clear {
+    color: rgba(0,0,0,0.87);
+    margin: 0px;
+    padding: 0px;
+    background-color: transparent;
 }
 
 /* TAGS CLOUD */
@@ -323,7 +322,7 @@ p {
     width: 30px !important;
     height: 30px !important;
     line-height: 30px !important;
-    top: 15px !important;
+    top: 15px  !important;
     left: 10px !important;
     font-style: normal;
 }
@@ -348,19 +347,19 @@ p {
 
 }
 
-.search-field label, .search-field input {
+.search-field label, .search-field input{
     font-size: 18px;
     padding-left: 10px !important;
     margin: 0 !important;
 }
 
-.search-field label:not(.active) {
+.search-field label:not(.active){
     top: -4px !important;
 }
 
 /* ADD BORDER TO A FIELD */
 
-.outline:not(.input-field) {
+.outline {
     border: 1px solid #57b23b;
     border-radius: .25rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
@@ -495,6 +494,16 @@ ul.chat li {
 #home-menu {
     padding-top: 20px;
 }
+
+/* FLOAT BUTTON */
+
+.btn-floating.second {
+    margin-right: -10px;
+    width: 45px;
+    height: 45px;
+    line-height: 58px;
+}
+
 
 /* new styles */
 .article-image {

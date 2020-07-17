@@ -42,6 +42,7 @@ class Service
 		$totalPages = 1;
 
 		$search = $request->input->data->search ?? false;
+		$searchTags = [];
 
 		if ($search && !empty($search)) {
 			$mediaWhere = "WHERE 1 ";
@@ -50,6 +51,7 @@ class Service
 				switch ($field) {
 					case 'title':
 						$value = preg_replace('!\s+!', ' ', $value);
+						$searchTags[] = $value;
 						$value = quoted_printable_encode($value);
 						$escapedTitle = Database::escape($value);
 						$escapedTitle = implode(', ', explode(' ', $escapedTitle));
@@ -57,19 +59,30 @@ class Service
 						$mediaWhere .= "AND MATCH(`title`) AGAINST('$escapedTitle') ";
 						break;
 					case 'media':
+						$mediaCaption = Database::queryCache("SELECT caption FROM _news_media WHERE id='$value'", Database::CACHE_YEAR);
+						if (!empty($mediaCaption)) $searchTags[] = $mediaCaption[0]->caption;
 						$mediaWhere .= "AND A.media_id = '$value' ";
 						break;
 					case 'minDate':
+						$searchTags[] = "Despues del $value";
 						$mediaWhere .= "AND A.pubDate >= STR_TO_DATE('$value','%d/%m/%Y') ";
 						break;
 					case 'maxDate':
+						$searchTags[] = "Antes del $value";
 						$mediaWhere .= "AND A.pubDate <= STR_TO_DATE('$value','%d/%m/%Y') ";
 						break;
 					case 'minComments':
+						$searchTags[] = "+$value comentarios";
 						$mediaWhere .= "AND A.comments >= '$value' ";
 						break;
 					case 'type':
+						$searchTags[] = ucfirst($value);
 						$mediaWhere .= "AND A.type = '$value' ";
+						break;
+					case 'category':
+						$categoryCaption = Database::queryCache("SELECT caption FROM _news_categories WHERE id='$value'", Database::CACHE_YEAR);
+						if (!empty($categoryCaption)) $searchTags[] = $categoryCaption[0]->caption;
+						$mediaWhere .= "AND A.category_id = '$value' ";
 						break;
 				}
 			}
@@ -132,7 +145,8 @@ class Service
 			"articles" => $articles,
 			'isGuest' => $request->person->isGuest, 'title' => "Titulares",
 			'page' => $currentPage, 'pages' => $totalPages,
-			'availableMedia' => $availableMedia, 'mediaTypes' => self::$mediaTypes
+			'availableMedia' => $availableMedia, 'mediaTypes' => self::$mediaTypes,
+			'searchTags' => $searchTags
 		];
 
 		// send data to the view
@@ -206,7 +220,6 @@ class Service
 
 			// send info to the view
 			$response->setCache('30');
-			$response->setLayout('noticias.ejs');
 			$response->setTemplate('story.ejs', $article, $images);
 		} else {
 			$this->error($response, "Articulo no encontrado", "No sabemos que articulo estas buscando");
