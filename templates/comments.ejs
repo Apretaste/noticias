@@ -24,19 +24,19 @@
                                 onclick="apretaste.send({'command': 'NOTICIAS HISTORIA', 'data':{'id': '<%= comment.id_article %>'}})">
                         <span><%= comment.title %></span><br>
                         <span>
-                            <span class="chip grey lighten-1">
+                            <span class="chip tiny grey lighten-1">
                                 <i class="material-icons tiny">calendar_today</i>
                                 <%= moment(comment.pubDate).format('MMM D, YYYY h:mm A') %>
                             </span>
 
                             <% if(comment.author != ''){ %>
-                                <span class="chip grey lighten-1">
+                                <span class="chip tiny grey lighten-1">
                                 <i class="material-icons tiny">person</i>
                                 <%= comment.author %>
                             </span>
                             <% } %>
 
-                            <span class="chip grey lighten-1">
+                            <span class="chip tiny grey lighten-1">
                                 <i class="material-icons tiny">local_offer</i>
                                 <%= comment.mediaCaption %>
                             </span>

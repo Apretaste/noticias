@@ -20,6 +20,17 @@ $(function () {
 		});
 	});
 
+	if (typeof similars != "undefined") {
+		var similarCards = $('.similar > .card');
+		var maxHeight = 0;
+		similarCards.each(function (index, similar) {
+			var height = $(similar).height();
+			if (height > maxHeight) maxHeight = height;
+		});
+
+		similarCards.height(maxHeight);
+	}
+
 	emptyPreferences = typeof preferredMedia != "undefined" && preferredMedia.length == 0;
 });
 

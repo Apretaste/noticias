@@ -1,49 +1,47 @@
-<div class="row" style="margin-top: 1rem">
-    <div class="col s12">
-        <% if(preferredMedia.length == 0){ %>
-            <div class="message danger">
-                <i class="fas fa-exclamation-triangle"></i>
-                <p>Para ver las notícias, primero debes escoger al menos un medio de prensa</p>
-            </div>
-        <% } %>
-
-        <div class="input-field outline" style="margin-top: 2rem">
-            <select onchange="select(value)">
-                <option value="all">Todos</option>
-                <% Object.keys(mediaTypes).forEach(function(key){ %>
-                    <option value="<%= key %>"><%= mediaTypes[key] %></option>
-                <% }) %>
-            </select>
+<div class="col s12">
+    <% if(preferredMedia.length == 0){ %>
+        <div class="message danger">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Para ver las notícias, primero debes escoger al menos un medio de prensa</p>
         </div>
+    <% } %>
 
-        <% availableMedia.forEach(function (media) { %>
-            <div class="card horizontal media <%= media.type %>" style="padding: .5rem">
-                <div class="card-image delete-if-no-image" onclick="checkMedia('<%= media.id %>')"
-                     style="background-image: url('{{APP_IMAGE_PATH}}/<%= media.logo %>')">
-                </div>
-                <div class="card-stacked">
-                    <div class="card-content" style="position: relative">
-                        <label class="media-checker">
-                            <input type="checkbox" <%= preferredMedia.indexOf(media.id) != -1 ? 'checked' : '' %>
-                                   id="<%= media.id %>" onchange="togglePreferredMedia(this)"/>
-                            <span></span>
-                        </label>
+    <div class="input-field outline" style="margin: 0 0 20px 0;">
+        <select onchange="select(value)">
+            <option value="all">Todos</option>
+            <% Object.keys(mediaTypes).forEach(function(key){ %>
+                <option value="<%= key %>"><%= mediaTypes[key] %></option>
+            <% }) %>
+        </select>
+    </div>
 
-                        <div onclick="checkMedia('<%= media.id %>')">
-                            <h4 class="black-text" style="margin: 0"><%= media.caption %></h4>
-                            <p><i class="material-icons tiny">local_offer</i> <%= mediaTypes[media.type] %></p>
-                            <p><%= media.description %></p>
-                        </div>
+    <% availableMedia.forEach(function (media) { %>
+        <div class="card horizontal media <%= media.type %>" style="padding: .5rem">
+            <div class="card-image delete-if-no-image" onclick="checkMedia('<%= media.id %>')"
+                 style="background-image: url('{{APP_IMAGE_PATH}}/<%= media.logo %>')">
+            </div>
+            <div class="card-stacked">
+                <div class="card-content" style="position: relative">
+                    <label class="media-checker">
+                        <input type="checkbox" <%= preferredMedia.indexOf(media.id) != -1 ? 'checked' : '' %>
+                               id="<%= media.id %>" onchange="togglePreferredMedia(this)"/>
+                        <span></span>
+                    </label>
+
+                    <div onclick="checkMedia('<%= media.id %>')">
+                        <h4 class="black-text" style="margin: 0"><%= media.caption %></h4>
+                        <p><i class="material-icons tiny">local_offer</i> <%= mediaTypes[media.type] %></p>
+                        <p><%= media.description %></p>
                     </div>
                 </div>
             </div>
-        <% }) %>
-
-        <!-- SUBMIT -->
-        <div class="fixed-action-btn">
-            <a class="btn-floating btn-large waves-effect waves-light green" onclick="savePreferredMedia()">
-                <i class="material-icons">send</i>
-            </a>
         </div>
+    <% }) %>
+
+    <!-- SUBMIT -->
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large waves-effect waves-light green" onclick="savePreferredMedia()">
+            <i class="material-icons">send</i>
+        </a>
     </div>
 </div>

@@ -1,11 +1,15 @@
 <div class="col s12" id="articles">
+    <% if(searchTags.length > 0) { %>
+        <div class="tags" style="margin-bottom: 20px">
+            <% searchTags.forEach(function (tag) { %>
+                <span class="chip tiny"><%= tag %></span>
+            <% }) %>
+        </div>
+    <% } %>
+
     <% if(articles.length == 0){ %>
         <p class="middle-center center grey-text">No hemos encontrado articulos con tus parámetros de búsqueda.</p>
     <% } %>
-
-    <% searchTags.forEach(function (tag) { %>
-        <span class="chip tiny"><%= tag %></span>
-    <% }) %>
 
     <% articles.forEach(function (article) { %>
         <div class="card"

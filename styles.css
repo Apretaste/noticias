@@ -364,8 +364,6 @@ p {
     border-radius: .25rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     box-shadow: none;
-    margin: 0.75rem !important;
-    width: calc(100% - 1.5rem);
 }
 
 .outline:focus {

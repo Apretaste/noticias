@@ -58,7 +58,7 @@
     <div class="row">
         <!--div class="col s12"><h5>Artículos simílares</h5></div-->
         <% similars.forEach(function (similar) { %>
-            <div class="col s4"
+            <div class="col s4 similar"
                  onclick="apretaste.send({command: 'noticias historia', data: {id: '<%= similar.id %>'}})">
                 <div class="card user-card">
                     <div class="content">
@@ -72,7 +72,7 @@
         <% }) %>
     </div>
 
-    <div class="col s12">
+    <div class="col s12 bottom-space">
     <span class="left valign-wrapper" style="font-weight: 500">
         <i class="material-icons tiny">comment</i>&nbsp;
         <span id="commentsCounter"><%= comments.length %></span>&nbsp;Comentarios
@@ -101,7 +101,7 @@
         </ul>
 
         <% if(comments.length == 0 && !isGuest) { %>
-            <div class="col s12" id="no-comments">Sé el primero en comentar</div>
+            <div id="no-comments">Sé el primero en comentar</div>
         <% } %>
     </div>
 
