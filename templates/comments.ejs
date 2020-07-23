@@ -23,21 +23,21 @@
                     <blockquote style="margin: 0.5rem 0"
                                 onclick="apretaste.send({'command': 'NOTICIAS HISTORIA', 'data':{'id': '<%= comment.id_article %>'}})">
                         <span><%= comment.title %></span><br>
-                        <span>
+                        <span style="margin-top: 5px; display: flex;">
                             <span class="chip tiny grey lighten-1">
-                                <i class="material-icons tiny">calendar_today</i>
+                                <i class="fa fa-calendar"></i>
                                 <%= moment(comment.pubDate).format('MMM D, YYYY h:mm A') %>
                             </span>
 
                             <% if(comment.author != ''){ %>
                                 <span class="chip tiny grey lighten-1">
-                                <i class="material-icons tiny">person</i>
+                                <i class="fa fa-user"></i>
                                 <%= comment.author %>
                             </span>
                             <% } %>
 
                             <span class="chip tiny grey lighten-1">
-                                <i class="material-icons tiny">local_offer</i>
+                                <i class="fa fa-tag"></i>
                                 <%= comment.mediaCaption %>
                             </span>
                         </span>

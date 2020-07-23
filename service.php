@@ -188,7 +188,7 @@ class Service
 				$comment->position = $comment->id_person == $request->person->id ? 'right' : 'left';
 			}
 
-			$article->similars = Database::queryCache("SELECT id, title, tags FROM _news_articles WHERE MATCH(`tags`) AGAINST('{$article->tags}') AND id <> {$article->id} LIMIT 3");
+			$article->similars = Database::queryCache("SELECT id, title, tags FROM _news_articles WHERE MATCH(`tags`) AGAINST('{$article->tags}') AND id <> {$article->id} LIMIT 2");
 
 			foreach ($article->similars as $similar) {
 				$similar->title = quoted_printable_decode($similar->title);

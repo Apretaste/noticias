@@ -67,20 +67,6 @@
     right: 10px;
 }
 
-#writeModal .actions {
-    position: absolute;
-    width: 100%;
-    padding: 10px;
-    bottom: 0;
-}
-
-#searchModal .actions {
-    position: absolute;
-    width: 100%;
-    right: 23px;
-    bottom: 23px;
-}
-
 #comments .circle {
     padding: 10px 13px;
     font-size: 2rem;

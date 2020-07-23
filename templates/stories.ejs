@@ -1,6 +1,6 @@
 <div class="col s12" id="articles">
     <% if(searchTags.length > 0) { %>
-        <div class="tags" style="margin-bottom: 20px">
+        <div class="tags" style="margin-bottom: 10px">
             <% searchTags.forEach(function (tag) { %>
                 <span class="chip tiny"><%= tag %></span>
             <% }) %>
@@ -128,16 +128,14 @@
                 <input id="minDate" type="text" class="datepicker">
                 <label for="minDate">Publicado después de</label>
             </div>
-
-            <a class="waves-effect waves-light btn" onclick="searchArticles()">
-                <i class="material-icons left">search</i>
-                Buscar
-            </a>
         </div>
 
-        <div class="actions">
-            <a class="btn-floating btn-large right" onclick="toggleSearchModal()">
-                <i class="large material-icons">arrow_back</i>
+        <div id="btn" class="fixed-action-btn">
+            <a class="btn-floating waves-effect waves-light grey second" onclick="toggleSearchModal()">
+                <i class="material-icons">arrow_back</i>
+            </a>
+            <a class="btn-floating btn-large waves-effect waves-light green" onclick="searchArticles()">
+                <i class="material-icons">save</i>
             </a>
         </div>
     </div>
