@@ -18,7 +18,7 @@
     <% availableMedia.forEach(function (media) { %>
         <div class="card horizontal media <%= media.type %>" style="padding: .5rem">
             <div class="card-image delete-if-no-image" onclick="checkMedia('<%= media.id %>')"
-                 style="background-image: url('{{APP_IMAGE_PATH}}/<%= media.logo %>')">
+                 style="background-image: url('{{APP_SERVICE_PATH}}/images/<%= media.logo %>')">
             </div>
             <div class="card-stacked">
                 <div class="card-content" style="position: relative">
