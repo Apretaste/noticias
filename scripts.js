@@ -8,6 +8,7 @@ var emptyPreferences;
 $(function () {
 	$('select').formSelect();
 	$('.tabs').tabs();
+	$('.modal').modal();
 
 	setDatePicker('#minDate', onSelectMinDate);
 	setDatePicker('#maxDate', onSelectMaxDate);
@@ -400,4 +401,44 @@ if (!Object.keys) {
 			return result;
 		};
 	}();
+}
+
+var share;
+function init(id, description) {
+	share = {
+		data: {
+			id: id,
+			description: description
+		},
+		text: description.substr(0, 100),
+		icon: 'newspaper',
+		send: function () {
+			apretaste.send({
+				command: 'PIZARRA PUBLICAR',
+				redirect: false,
+				callback: {
+					name: 'toast',
+					data: 'La noticia fue compartida en Pizarra'
+				},
+				data: {
+					text: $('#message').val(),
+					image: '',
+					link: {
+						command: btoa(JSON.stringify({
+							command: 'NOTICIAS HISTORIA',
+							data: {
+								id: share.data.id
+							}
+						})),
+						icon: share.icon,
+						text: share.text
+					}
+				}
+			})
+		}
+	};
+}
+
+function toast(message){
+	M.toast({html: message});
 }
