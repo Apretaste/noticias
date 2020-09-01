@@ -410,7 +410,7 @@ function init(id, description) {
 			id: id,
 			description: description
 		},
-		text: description.substr(0, 200),
+		text: description.substr(0, 50).trim() + '...',
 		icon: 'newspaper',
 		send: function () {
 			apretaste.send({
