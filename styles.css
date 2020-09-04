@@ -283,6 +283,13 @@ p {
     min-height: 63px;
 }
 
+/* PREVIEW COLLECTION */
+
+.collection.preview {
+    margin: 20px 0px 0px 0px;
+    min-height: 65px;
+}
+
 .collection.profile .secondary-content i {
     font-size: 30px;
     line-height: 1.1;
