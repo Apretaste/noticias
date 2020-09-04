@@ -403,14 +403,19 @@ if (!Object.keys) {
 	}();
 }
 
+function teaser(text) {
+	return text.length <= 50 ? text.trim() : text.trim().substr(0, 50).trim() + "...";
+}
+
 var share;
+
 function init(id, description) {
 	share = {
 		data: {
 			id: id,
 			description: description
 		},
-		text: description.substr(0, 50).trim() + '...',
+		text: teaser(description),
 		icon: 'newspaper',
 		send: function () {
 			apretaste.send({
