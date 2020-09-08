@@ -1,9 +1,10 @@
 {
-  "name": "noticias",
-  "caption": "Noticias",
-  "description": "Noticias de todas las categorias, en un solo lugar",
-  "category": "informativo",
-  "creator": "ricardo@apretaste.org",
-  "listed": true,
-  "guest": true
+	"name": "noticias",
+	"caption": "Noticias",
+	"icon": "fas fa-newspaper",
+	"description": "Noticias de todas las categorías, en un solo lugar",
+	"category": "informativo",
+	"creator": "ricardo@apretaste.org",
+	"listed": true,
+	"guest": true
 }

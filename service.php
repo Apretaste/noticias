@@ -83,7 +83,7 @@ class Service
 						break;
 					case 'type':
 						$searchTags[] = ucfirst($value);
-						$mediaWhere .= "AND A.type = '$value' ";
+						$mediaWhere .= "AND B.type = '$value' ";
 						break;
 					case 'category':
 						$categoryCaption = Database::queryCache("SELECT caption FROM _news_categories WHERE id='$value'", Database::CACHE_YEAR);
@@ -109,7 +109,7 @@ class Service
 		);
 
 		$inCuba = $request->input->inCuba ?? false;
-		$serviceImgPath = SERVICE_PATH . "news/images";
+		$serviceImgPath = SERVICE_PATH . "{$request->input->service}/images";
 		$images = ["$serviceImgPath/no-image.png"];
 		$techImgDir = SHARED_PUBLIC_PATH . 'content/news';
 
