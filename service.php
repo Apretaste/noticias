@@ -7,6 +7,7 @@ use Apretaste\Response;
 use Framework\Alert;
 use Framework\Crawler;
 use Framework\Database;
+use Apretaste\Challenges;
 
 class Service
 {
@@ -232,6 +233,8 @@ class Service
 			if (!empty($article->image)) {
 				$images[] = "$techImgDir/{$article->mediaName}/images/{$article->image}";
 			}
+
+			Challenges::complete('read-news', $request->person->id);
 
 			// send info to the view
 			$response->setCache('30');
