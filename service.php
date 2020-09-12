@@ -7,6 +7,7 @@ use Apretaste\Response;
 use Framework\Alert;
 use Framework\Crawler;
 use Framework\Database;
+use Apretaste\Challenges;
 
 class Service
 {
@@ -83,7 +84,7 @@ class Service
 						break;
 					case 'type':
 						$searchTags[] = ucfirst($value);
-						$mediaWhere .= "AND A.type = '$value' ";
+						$mediaWhere .= "AND B.type = '$value' ";
 						break;
 					case 'category':
 						$categoryCaption = Database::queryCache("SELECT caption FROM _news_categories WHERE id='$value'", Database::CACHE_YEAR);
@@ -109,7 +110,7 @@ class Service
 		);
 
 		$inCuba = $request->input->inCuba ?? false;
-		$serviceImgPath = SERVICE_PATH . "news/images";
+		$serviceImgPath = SERVICE_PATH . "{$request->input->service}/images";
 		$images = ["$serviceImgPath/no-image.png"];
 		$techImgDir = SHARED_PUBLIC_PATH . 'content/news';
 
@@ -232,6 +233,8 @@ class Service
 			if (!empty($article->image)) {
 				$images[] = "$techImgDir/{$article->mediaName}/images/{$article->image}";
 			}
+
+			Challenges::complete('read-news', $request->person->id);
 
 			// send info to the view
 			$response->setCache('30');
@@ -374,6 +377,8 @@ class Service
 
 			// add the experience
 			Level::setExperience('NEWS_COMMENT_FIRST_DAILY', $request->person->id);
+
+			Challenges::complete('comment-news', $request->person->id);
 		} else {
 			Database::query("INSERT INTO _news_comments (id_person, content) VALUES ('{$request->person->id}', '$comment')");
 		}
