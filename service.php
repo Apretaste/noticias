@@ -377,6 +377,8 @@ class Service
 
 			// add the experience
 			Level::setExperience('NEWS_COMMENT_FIRST_DAILY', $request->person->id);
+
+			Challenges::complete('comment-news', $request->person->id);
 		} else {
 			Database::query("INSERT INTO _news_comments (id_person, content) VALUES ('{$request->person->id}', '$comment')");
 		}
