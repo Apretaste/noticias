@@ -6,7 +6,9 @@ var emptyPreferences;
 
 
 $(function () {
-	$('select').formSelect();
+	if (typeof title != "undefined") {
+		if (title !== "Medios") $('select').formSelect();
+	} else $('select').formSelect();
 	$('.tabs').tabs();
 	$('.modal').modal();
 
@@ -444,6 +446,6 @@ function init(id, description) {
 	};
 }
 
-function toast(message){
+function toast(message) {
 	M.toast({html: message});
 }
