@@ -97,8 +97,7 @@ class Service
 			}
 		} else {
 			$totalPages = Database::queryFirst("SELECT COUNT(id) AS total FROM _news_articles WHERE media_id IN($preferredMedia)")->total;
-			$totalPages = intval($totalPages / 20) + ($totalPages % 20 > 0 ? 1 : 0);
-			;
+			$totalPages = intval($totalPages / 20) + ($totalPages % 20 > 0 ? 1 : 0);;
 		}
 
 		$articles = Database::queryCache(
@@ -158,7 +157,8 @@ class Service
 			'isGuest' => $request->person->isGuest, 'title' => "Titulares",
 			'page' => $currentPage, 'pages' => $totalPages,
 			'availableMedia' => $availableMedia, 'mediaTypes' => self::$mediaTypes,
-			'searchTags' => $searchTags
+			'searchTags' => $searchTags,
+			'reloadLibs' => $request->input->environment == 'app' && version_compare($request->person->appVersion, '7.0.0', '<')
 		];
 
 		// send data to the view
@@ -208,8 +208,7 @@ class Service
 
 				// To lower and without tildes
 				$similar->tags = preg_replace('/&([^;])[^;]*;/', "$1", htmlentities(mb_strtolower($similar->tags), null));
-				$article->tags = preg_replace('/&([^;])[^;]*;/', "$1", htmlentities(mb_strtolower($article->tags), null));
-				;
+				$article->tags = preg_replace('/&([^;])[^;]*;/', "$1", htmlentities(mb_strtolower($article->tags), null));;
 
 				$similarTags = array_intersect(explode(',', $article->tags), explode(',', $similar->tags));
 
@@ -274,7 +273,8 @@ class Service
 			'availableMedia' => $availableMedia,
 			'preferredMedia' => $preferredMedia,
 			'mediaTypes' => self::$mediaTypes,
-			'title' => 'Medios'
+			'title' => 'Medios',
+			'reloadLibs' => $request->input->environment == 'app' && version_compare($request->person->appVersion, '7.0.0', '<')
 		];
 
 		$response->setLayout('noticias.ejs');
@@ -333,7 +333,8 @@ class Service
 			'gender' => $request->person->gender,
 			'avatar' => $request->person->avatar,
 			'avatarColor' => $request->person->avatarColor,
-			'title' => 'Comentarios'
+			'title' => 'Comentarios',
+			'reloadLibs' => $request->input->environment == 'app' && version_compare($request->person->appVersion, '7.0.0', '<')
 		];
 
 		// send info to the view

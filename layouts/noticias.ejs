@@ -1,3 +1,10 @@
+<% if (typeof reloadLibs != "undefined" && reloadLibs) {
+    var script = document.createElement('script');
+    script.src = "file:///android_asset/js/materialize.min.js";
+
+    var script2 = document.createElement('script');
+    script2.src = 'file:///android_asset/js/apretaste.js';
+} %>
 <%
 var menu = [
     {link: '', caption: 'Titulares'},

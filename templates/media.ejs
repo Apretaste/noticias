@@ -6,14 +6,14 @@
         </div>
     <% } %>
 
-    <!--div class="input-field outline" style="margin: 0 0 20px 0;">
+    <div class="input-field outline" style="margin: 0 0 20px 0;">
         <select onchange="select(value)">
             <option value="all">Todos</option>
             <% Object.keys(mediaTypes).forEach(function(key){ %>
                 <option value="<%= key %>"><%= mediaTypes[key] %></option>
             <% }) %>
         </select>
-    </div-->
+    </div>
 
     <% availableMedia.forEach(function (media) { %>
         <div class="card horizontal media <%= media.type %>" style="padding: .5rem">

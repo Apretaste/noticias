@@ -6,9 +6,7 @@ var emptyPreferences;
 
 
 $(function () {
-	if (typeof title == "undefined") {
-		$('select').formSelect();
-	} else if (title !== "Medios") $('select').formSelect();
+	$('select').formSelect();
 	$('.tabs').tabs();
 	$('.modal').modal();
 
@@ -120,7 +118,7 @@ function filterMedia(value) {
 
 	mediaSelect.html(options);
 
-	//mediaSelect.formSelect();
+	mediaSelect.formSelect();
 }
 
 function searchArticles() {
@@ -446,6 +444,6 @@ function init(id, description) {
 	};
 }
 
-function toast(message) {
+function toast(message){
 	M.toast({html: message});
 }
