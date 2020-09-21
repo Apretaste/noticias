@@ -4,11 +4,10 @@ var emptyPreferences;
 
 // On load function
 
-
 $(function () {
-	$('select').formSelect();
 	$('.tabs').tabs();
 	$('.modal').modal();
+	$('select').formSelect();
 
 	setDatePicker('#minDate', onSelectMinDate);
 	setDatePicker('#maxDate', onSelectMaxDate);
@@ -45,8 +44,7 @@ function onSelectMaxDate(value) {
 
 function setDatePicker(id, onSelect, minDate, maxDate = new Date()) {
 	var internationalization = {
-		months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-			'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 		monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
 		weekdaysAbbrev: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
 		weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']
@@ -104,21 +102,6 @@ function toggleSearchModal() {
 			direction: "up"
 		}).attr('status', 'closed');
 	}
-}
-
-function filterMedia(value) {
-	var options = '<option value="all" selected>Todos</option>\n';
-	var mediaSelect = $('#media');
-
-	availableMedia.forEach(function (media) {
-		if (value === 'all' || media.type === value) {
-			options += '<option value="' + media.id + '" selected>' + media.caption + '</option>\n';
-		}
-	});
-
-	mediaSelect.html(options);
-
-	mediaSelect.formSelect();
 }
 
 function searchArticles() {
@@ -202,21 +185,6 @@ function showToast(text) {
 
 function options() {
 	$('.drop-down .options').slideDown('fast');
-}
-
-function select(mediaType) {
-	// show all categories
-	if (mediaType == 'all') {
-		$('.media').slideDown();
-	}
-	// filter by mediaType name
-	else {
-		$('.media').hide();
-		$('.' + mediaType).slideDown();
-	}
-
-	// hide the options bar
-	$('.drop-down .options').hide();
 }
 
 // Request functions

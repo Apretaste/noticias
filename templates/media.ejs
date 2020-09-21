@@ -1,47 +1,35 @@
-<div class="col s12">
-    <% if(preferredMedia.length == 0){ %>
-        <div class="message danger">
-            <i class="fas fa-exclamation-triangle"></i>
-            <p>Para ver las notícias, primero debes escoger al menos un medio de prensa</p>
-        </div>
-    <% } %>
+<div class="row">
+	<div class="col s12">
+		<% if(preferredMedia.length == 0){ %>
+			<div class="message danger">
+				<i class="fas fa-exclamation-triangle"></i>
+				<p>Para ver las noticias, primero escoge uno o varios medios de prensa</p>
+			</div>
+		<% } %>
 
-    <div class="input-field outline" style="margin: 0 0 20px 0;">
-        <select onchange="select(value)">
-            <option value="all">Todos</option>
-            <% Object.keys(mediaTypes).forEach(function(key){ %>
-                <option value="<%= key %>"><%= mediaTypes[key] %></option>
-            <% }) %>
-        </select>
-    </div>
+		<% availableMedia.forEach(function(item){ %>
+			<div class="card" onclick="checkMedia('<%= item.id %>')">
+				<div class="card-person grey lighten-5">
+					<label class="media-checker">
+						<input type="checkbox" <%= preferredMedia.indexOf(item.id) != -1 ? 'checked' : '' %> id="<%= item.id %>" onchange="togglePreferredMedia(this)"/>
+						<span onclick="checkMedia('<%= item.id %>')"></span>
+					</label>
+					<span class="chip medium clear"><i class="fas fa-tag"></i> <%= mediaTypes[item.type] %></span>
+				</div>
+				<div class="card-content">
+					<img class="image left" src="{{APP_SERVICE_PATH}}/images/<%= item.logo %>">
+					<span class="card-title"><%= item.caption %></span>
+					<p><%= item.description %></p>
+				</div>
+			</div>
+		<% }); %>
+	</div>
+</div>
 
-    <% availableMedia.forEach(function (media) { %>
-        <div class="card horizontal media <%= media.type %>" style="padding: .5rem">
-            <div class="card-image delete-if-no-image" onclick="checkMedia('<%= media.id %>')"
-                 style="background-image: url('{{APP_SERVICE_PATH}}/images/<%= media.logo %>')">
-            </div>
-            <div class="card-stacked">
-                <div class="card-content" style="position: relative">
-                    <label class="media-checker">
-                        <input type="checkbox" <%= preferredMedia.indexOf(media.id) != -1 ? 'checked' : '' %>
-                               id="<%= media.id %>" onchange="togglePreferredMedia(this)"/>
-                        <span></span>
-                    </label>
+<div class="bottom-space"></div>
 
-                    <div onclick="checkMedia('<%= media.id %>')">
-                        <h4 class="black-text" style="margin: 0"><%= media.caption %></h4>
-                        <p><i class="material-icons tiny">local_offer</i> <%= mediaTypes[media.type] %></p>
-                        <p><%= media.description %></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <% }) %>
-
-    <!-- SUBMIT -->
-    <div class="fixed-action-btn">
-        <a class="btn-floating btn-large waves-effect waves-light green" onclick="savePreferredMedia()">
-            <i class="material-icons">send</i>
-        </a>
-    </div>
+<div class="fixed-action-btn">
+	<a class="btn-floating btn-large waves-effect waves-light green" onclick="savePreferredMedia()">
+		<i class="material-icons">check</i>
+	</a>
 </div>
