@@ -4,10 +4,9 @@ use Apretaste\Level;
 use Apretaste\Person;
 use Apretaste\Request;
 use Apretaste\Response;
-use Framework\Alert;
+use Apretaste\Challenges;
 use Framework\Crawler;
 use Framework\Database;
-use Apretaste\Challenges;
 
 class Service
 {
@@ -19,8 +18,6 @@ class Service
 	 *
 	 * @param Request $request
 	 * @param Response $response
-	 * @throws Alert
-	 * @author ricardo
 	 */
 	public function _main(Request $request, Response &$response)
 	{
@@ -286,7 +283,6 @@ class Service
 	 * @param Request $request
 	 * @param Response $response
 	 */
-
 	public function _medios(Request $request, Response $response)
 	{
 		// get the media selected as prefered
@@ -294,9 +290,6 @@ class Service
 
 		// get the list of media
 		$availableMedia = Database::queryCache("SELECT * FROM _news_media");
-
-		// get the array of images
-		$images = array_column($availableMedia , 'logo');
 
 		// create content for the view
 		$content = [
@@ -306,7 +299,7 @@ class Service
 		];
 
 		// send data to the view
-		$response->setTemplate('media.ejs', $content, $images);
+		$response->setTemplate('media.ejs', $content);
 	}
 
 	/**
