@@ -1,417 +1,209 @@
-// Variables
-
-var emptyPreferences;
-
-// On load function
-
-$(function () {
+// on page load...
+//
+$(document).ready(function() {
+	// initialize components
 	$('.tabs').tabs();
 	$('.modal').modal();
 	$('select').formSelect();
 
-	setDatePicker('#minDate', onSelectMinDate);
-	setDatePicker('#maxDate', onSelectMaxDate);
-
-	$('#sources').change(function (event) {
-		var selected = $('#sources option:selected').val();
-		return apretaste.send({
-			"command": "NOTICIAS",
-			"data": {"source": selected}
-		});
-	});
-
-	if (typeof similars != "undefined") {
-		var similarCards = $('.similar > .card');
-		var maxHeight = 0;
-		similarCards.each(function (index, similar) {
-			var height = $(similar).height();
-			if (height > maxHeight) maxHeight = height;
-		});
-
-		similarCards.height(maxHeight);
-	}
-
-	emptyPreferences = typeof preferredMedia != "undefined" && preferredMedia.length == 0;
+	// todo
 });
 
-function onSelectMinDate(value) {
-	setDatePicker('#maxDate', onSelectMaxDate, value);
-}
-
-function onSelectMaxDate(value) {
-	setDatePicker('#minDate', onSelectMinDate, null, value);
-}
-
-function setDatePicker(id, onSelect, minDate, maxDate = new Date()) {
-	var internationalization = {
-		months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-		monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-		weekdaysAbbrev: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
-		weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']
-	};
-
-	$(id).datepicker({
-		autoClose: true,
-		format: 'dd/mm/yyyy',
-		yearRange: [2020, (new Date()).getFullYear()],
-		minDate: minDate,
-		maxDate: maxDate,
-		firstDay: 1,
-		i18n: internationalization,
-		onSelect: onSelect,
-	});
-}
-
-// Main functions
-
-function toggleWriteModal() {
-	var status = $('#writeModal').attr('status');
-
-	if (status == "closed") {
-		if ($('.container:not(#writeModal) > .navbar-fixed').length == 1) {
-			var h = $('.container:not(#writeModal) > .navbar-fixed')[0].clientHeight + 1;
-			$('#writeModal').css('height', 'calc(100% - ' + h + 'px)');
-		}
-
-		$('#writeModal').slideToggle({
-			direction: "up"
-		}).attr('status', 'opened');
-		$('#comment').focus();
-	} else {
-		$('#writeModal').slideToggle({
-			direction: "up"
-		}).attr('status', 'closed');
-	}
-}
-
-function toggleSearchModal() {
-	var status = $('#searchModal').attr('status');
-
-	if (status == "closed") {
-		if ($('.container:not(#searchModal) > .navbar-fixed').length == 1) {
-			var h = $('.container:not(#searchModal) > .navbar-fixed')[0].clientHeight + 1;
-			$('#searchModal').css('height', 'calc(100% - ' + h + 'px)');
-		}
-
-		$('#searchModal').slideToggle({
-			direction: "up"
-		}).attr('status', 'opened');
-		$('#title').focus();
-	} else {
-		$('#searchModal').slideToggle({
-			direction: "up"
-		}).attr('status', 'closed');
-	}
-}
-
+// search for an article
+//
 function searchArticles() {
 	// array of possible values
 	var names = ['title', 'media', 'type', 'minDate', 'maxDate', 'minComments'];
 	var hasData = false;
+	var data = {};
 
 	// create object to send to the backend
-	var data = {};
 	names.forEach(function (prop) {
-		var value = $('#' + prop).val();
+		var value = $('#'+prop).val();
 		if (value != null && value !== "" && value !== "all") {
 			data[prop] = value;
 			hasData = true;
 		}
 	});
 
+	// error if no data was passed
 	if (!hasData) {
-		showToast('Ingrese algún parámetro de búsqueda');
+		M.toast({html: 'Ingrese algún parámetro de búsqueda'});
 		return;
 	}
 
+	// start the search
 	apretaste.send({
-		command: 'noticias', data: {search: data}
+		command: 'NOTICIAS',
+		data: {search: data}
 	})
 }
 
-function openProfile(username) {
-	apretaste.send(
-		{
-			'command': 'PERFIL',
-			'data': {'username': '@' + username}
-		}
-	);
-}
+// save the media types
+//
+function saveMedia() {
+	// get the selected IDs
+	var selectedId = [];
+	$('.media-checker input').each(function(i, e){
+		if($(e).prop('checked')) selectedId.push($(e).attr('id'));
+	});
 
-function checkMedia(id) {
-	$('#' + id).click();
-}
-
-function togglePreferredMedia(checkbox) {
-	if (checkbox.checked) preferredMedia.push(checkbox.id);
-	else {
-		for (var i = 0; i < preferredMedia.length; i++) {
-			if (preferredMedia[i] === checkbox.id) {
-				preferredMedia.splice(i, 1);
-			}
-		}
+	// display error if no media was selected
+	if (selectedId.length <= 0) {
+		M.toast({html: 'Seleccione al menos un medio'});
+		return false
 	}
-}
 
-function savePreferredMedia() {
-	if (preferredMedia.length > 0) {
-		apretaste.send({
-			command: 'noticias medios',
-			data: {
-				preferredMedia: preferredMedia
-			},
-			redirect: false,
-			callback: {
-				name: 'savePreferredMediaCallback'
-			}
-		})
-	} else {
-		showToast('Debe seleccionar al menos un medio');
-	}
-}
-
-function savePreferredMediaCallback() {
-	apretaste.send({command: 'noticias'});
-}
-
-function showToast(text) {
-	M.toast({
-		html: text
+	// send data to backend and redirect
+	apretaste.send({
+		command: 'NOTICIAS GUARDAR',
+		data: {ids: selectedId}
 	});
 }
 
-
-// FILTER FUNCTIONS
-
-function options() {
-	$('.drop-down .options').slideDown('fast');
-}
-
-// Request functions
-
-function sendComment() {
-	var comment = $('#comment').val().trim();
-
-	if (comment.length >= 2) {
-		apretaste.send({
-			'command': 'NOTICIAS COMENTAR',
-			'data': {
-				'comment': comment,
-				'article': typeof id != "undefined" ? id : null
-			},
-			'redirect': false,
-			'callback': {
-				'name': 'sendCommentCallback',
-				'data': comment.escapeHTML()
-			}
-		});
-	} else {
-		showToast('Escriba algo');
-	}
-}
-
-// Callback functions
-
-function sendCommentCallback(comment) {
-	var element;
-
-	if (title === 'Comentarios') {
-		element = "<div class=\"card\" id=\"last\">\n" +
-			"            <div class=\"card-person grey lighten-5\">\n" +
-			"                <div class=\"person-avatar circle left\" face=\"" + avatar + "\" color=\"" + avatarColor + "\"\n" +
-			"                     size=\"30\"></div>\n" +
-			"                <a href=\"#!\" class=\"" + gender + "\"\n" +
-			"                   onclick=\"openProfile('" + username + "')\">@" + username + "</a>\n" +
-			"                <div class=\"right\">\n" +
-			"                    <i class=\"material-icons ultra-tiny\">calendar_today</i> " + moment().format('MMM D, h:mm A') + "\n" +
-			"                </div>\n" +
-			"            </div>\n" +
-			"            <div class=\"card-content\" style=\"padding: 0.75rem\">\n" +
-			"                <p>" + comment + "</p>\n" +
-			"            </div>\n" +
-			"        </div>"
-	} else {
-		element =
-			"<li class=\"right\" id=\"last\">\n" +
-			"    <div class=\"person-avatar circle\" face=\"" + avatar + "\" color=\"" + avatarColor + "\"\n" +
-			"         size=\"30\" onclick=\"openProfile('" + username + "')\"></div>\n" +
-			"    <div class=\"head\">\n" +
-			"        <a onclick=\"openProfile('" + username + "')\"\n" +
-			"           class=\"" + gender + "\">@" + username + "</a>\n" +
-			"        <span class=\"date\">" + moment().format('MMM D, YYYY h:mm A') + "</span>\n" +
-			"    </div>\n" +
-			"    <span class=\"text\">" + comment + "</span>\n" +
-			"</li>"
-	}
-
-	$('#no-comments').remove();
-
-	$('#comments').prepend(element);
-	$('#comment').val('');
-	$('html, body').animate({
-		scrollTop: $("#last").offset().top - 64
-	}, 1000);
-
-	var commentsCounter = $('#commentsCounter');
-
-	commentsCounter.html(parseInt(commentsCounter.html()) + 1);
-
-	$('.person-avatar').each(function (i, item) {
-		setElementAsAvatar(item)
-	});
-
-	toggleWriteModal();
-}
-
-// Prototype functions
-
-String.prototype.escapeHTML = function () {
-	var htmlEscapes = {
-		'&': '&amp;',
-		'<': '&lt;',
-		'>': '&gt;',
-		'"': '&quot;',
-		"'": '&#x27;',
-		'/': '&#x2F;'
-	};
-	var htmlEscaper = /[&<>"'\/]/g;
-	return ('' + this).replace(htmlEscaper, function (match) {
-		return htmlEscapes[match];
-	});
-};
-
-Date.prototype.nowFormated = function () {
-	var now = new Date(); // This current millisecond on user's computer.
-
-	var format = "{D}/{M}/{Y} · {h}:{m}{ap}";
-	var Month = now.getMonth() + 1;
-	format = format.replace(/\{M\}/g, Month);
-	var Mday = now.getDate();
-	format = format.replace(/\{D\}/g, Mday);
-	var Year = now.getFullYear().toString().slice(2);
-	format = format.replace(/\{Y\}/g, Year);
-	var h = now.getHours();
-	var pm = h > 11;
-
-	if (h > 12) {
-		h -= 12;
-	}
-
-	;
-	var ap = pm ? "pm" : "am";
-	format = format.replace(/\{ap\}/g, ap);
-	var hh = h;
-	format = format.replace(/\{h\}/g, hh);
-	var mm = now.getMinutes();
-
-	if (mm < 10) {
-		mm = "0" + mm;
-	}
-
-	format = format.replace(/\{m\}/g, mm);
-	return format;
-};
-
-/**/
-
-String.prototype.replaceAll = function (search, replacement) {
-	return this.split(search).join(replacement);
-};
-
-// Pollyfill
-
-function _typeof(obj) {
-	if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-		_typeof = function _typeof(obj) {
-			return typeof obj;
-		};
-	} else {
-		_typeof = function _typeof(obj) {
-			return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-		};
-	}
-	return _typeof(obj);
-}
-
-if (!Object.keys) {
-	Object.keys = function () {
-		'use strict';
-
-		var hasOwnProperty = Object.prototype.hasOwnProperty,
-			hasDontEnumBug = !{
-				toString: null
-			}.propertyIsEnumerable('toString'),
-			dontEnums = ['toString', 'toLocaleString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor'],
-			dontEnumsLength = dontEnums.length;
-		return function (obj) {
-			if (_typeof(obj) !== 'object' && (typeof obj !== 'function' || obj === null)) {
-				throw new TypeError('Object.keys called on non-object');
-			}
-
-			var result = [],
-				prop,
-				i;
-
-			for (prop in obj) {
-				if (hasOwnProperty.call(obj, prop)) {
-					result.push(prop);
-				}
-			}
-
-			if (hasDontEnumBug) {
-				for (i = 0; i < dontEnumsLength; i++) {
-					if (hasOwnProperty.call(obj, dontEnums[i])) {
-						result.push(dontEnums[i]);
-					}
-				}
-			}
-
-			return result;
-		};
-	}();
-}
-
+// create a teaser to share
+//
 function teaser(text) {
 	return text.length <= 50 ? text.trim() : text.trim().substr(0, 50).trim() + "...";
 }
 
-var share;
+// share a news article in Pizarra
+//
+function share(id, text) {
+	// clean and shorten texts
+	var articleId = $('#articleId').val();
+	var message = $('#message').val();
+	var title = teaser($('#shareModal .title').text());
 
-function init(id, description) {
-	share = {
+	// share in pizarra
+	apretaste.send({
+		command: 'PIZARRA PUBLICAR',
+		redirect: false,
 		data: {
-			id: id,
-			description: description
-		},
-		text: teaser(description),
-		icon: 'newspaper',
-		send: function () {
-			apretaste.send({
-				command: 'PIZARRA PUBLICAR',
-				redirect: false,
-				callback: {
-					name: 'toast',
-					data: 'La noticia fue compartida en Pizarra'
-				},
-				data: {
-					text: $('#message').val(),
-					image: '',
-					link: {
-						command: btoa(JSON.stringify({
-							command: 'NOTICIAS HISTORIA',
-							data: {
-								id: share.data.id
-							}
-						})),
-						icon: share.icon,
-						text: share.text
-					}
-				}
-			})
+			text: message,
+			image: '',
+			link: {
+				command: btoa(JSON.stringify({
+					command: 'NOTICIAS HISTORIA',
+					data: {id: articleId}
+				})),
+				icon: 'newspaper',
+				text: title
+			}
 		}
-	};
+	});
+
+	// show message
+	M.toast({html: 'La noticia fue compartida en Pizarra'});
 }
 
-function toast(message){
-	M.toast({html: message});
+// comment on a note or interact on the comment board
+//
+function comment() {
+	// get the comment
+	var comment = $('#comment').val().trim();
+	var articleId = $('#articleId').val();
+
+	// error if comment is blank
+	if (comment.length <= 0) {
+		M.toast({html: '¡Escribe algo!'});
+		return false;
+	}
+
+	// choose if there is a comment or a note
+	var callback = (typeof articleId == 'undefined') ? "sendPostCallback" : "sendCommentCallback";
+
+	// post the comment
+	apretaste.send({
+		'command': 'NOTICIAS COMENTAR',
+		'data': {
+			'comment': comment,
+			'article': articleId
+		},
+		'redirect': false,
+		'callback': {'name': callback}
+	});
 }
+
+// callback to comment on a note
+//
+function sendCommentCallback() {
+	// get data from the view
+	var comment = escapeHTML($('#comment').val().trim());
+	var username = $('#username').val().trim();
+	var gender = $('#gender').val().trim();
+	var avatar = $('#avatar').val().trim();
+	var avatarColor = $('#avatarColor').val().trim();
+
+	// create comment HTML
+	var element =
+		"<li class='right' id='last'>" +
+		"	<div class='person-avatar circle' face='"+avatar+"' color='"+avatarColor+"' size='30'></div>" +
+		"	<div class='head'>" +
+		"		<a class='"+gender+"'>@"+username+"</a>" +
+		"		<span class='date'>"+moment().format('MMM D, YYYY h:mm A')+"</span>" +
+		"	</div>" +
+		"	<span class='text'>"+comment+"</span>" +
+		"</li>";
+
+	// add comment to the list
+	$('#no-comments').remove();
+	$('#comments').prepend(element);
+
+	// clean the field
+	$('#comment').val('');
+
+	// scroll to the comment
+	$('html, body').animate({scrollTop: $("#last").offset().top - 64}, 1000);
+
+	// re-create avatar
+	setElementAsAvatar($('#last .person-avatar').get());
+
+	// increase number of comments
+	var commentsCounter = $('#comments-counter');
+	commentsCounter.html(parseInt(commentsCounter.html())+1);
+}
+
+// callback to post on the board
+//
+function sendPostCallback() {
+	// get data from the view
+	var comment = escapeHTML($('#comment').val().trim());
+	var username = $('#username').val().trim();
+	var gender = $('#gender').val().trim();
+	var avatar = $('#avatar').val().trim();
+	var avatarColor = $('#avatarColor').val().trim();
+
+	// create comment HTML
+	var element =
+		"<div class='card' id='last'>" +
+		"	<div class='card-person grey lighten-5'>" +
+		"		<div class='person-avatar circle left' face='"+avatar+"' color='"+avatarColor+"' size='30'></div>" +
+		"		<a href='#!' class='"+gender+"'>@"+username+"</a>" +
+		"		<span class='chip tiny clear right'><i class='material-icons icon'>perm_contact_calendar</i> "+moment().format('MMM D, h:mm A')+"</span>" +
+		"	</div>" +
+		"	<div class='card-content'><p>"+comment+"</p></div>" +
+		"</div>";
+
+	// add comment to the list
+	$('#comments').prepend(element);
+
+	// clean the field
+	$('#comment').val('');
+
+	// scroll to the comment
+	$('html, body').animate({scrollTop: $("#last").offset().top - 64}, 1000);
+
+	// re-create avatar
+	setElementAsAvatar($('#last .person-avatar').get());
+}
+
+// escape HTML data
+//
+function escapeHTML(text) {
+	var htmlEscapes = {'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#x27;','/': '&#x2F;'};
+	var htmlEscaper = /[&<>"'\/]/g;
+	return ('' + text).replace(htmlEscaper, function (match) {
+		return htmlEscapes[match];
+	});
+};

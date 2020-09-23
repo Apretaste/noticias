@@ -1,18 +1,33 @@
 <div class="row">
 	<div class="col s12">
-		<% if(preferredMedia.length == 0){ %>
+		<ul class="tabs tabs-fixed-width">
+			<li class="tab"><a href="#" onclick="apretaste.send({command:'NOTICIAS'})">Titulares</a></li>
+			<li class="tab"><a href="#" onclick="apretaste.send({command:'NOTICIAS COMENTARIOS'})">Comentarios</a></li>
+			<li class="tab"><a href="#" class="active">Medios</a></li>
+		</ul>
+	</div>
+</div>
+
+<% if(preferredMedia.length <= 0) { %>
+	<div class="row">
+		<div class="col s12">
 			<div class="message danger">
 				<i class="fas fa-exclamation-triangle"></i>
-				<p>Para ver las noticias, primero escoge uno o varios medios de prensa</p>
+				<p>Para ver las noticias, primero escoja uno o varios medios de prensa</p>
 			</div>
-		<% } %>
+		</div>
+	</div>
+<% } %>
 
-		<% availableMedia.forEach(function(item){ %>
-			<div class="card" onclick="checkMedia('<%= item.id %>')">
+<div class="row">
+	<div class="col s12">
+		<% availableMedia.forEach(function(item) { %>
+			<% var checked = preferredMedia.indexOf(item.id) != -1 ? 'checked' : '' %>
+			<div class="card">
 				<div class="card-person grey lighten-5">
-					<label class="media-checker">
-						<input type="checkbox" <%= preferredMedia.indexOf(item.id) != -1 ? 'checked' : '' %> id="<%= item.id %>" onchange="togglePreferredMedia(this)"/>
-						<span onclick="checkMedia('<%= item.id %>')"></span>
+					<label class="right media-checker">
+						<input type="checkbox" id="<%= item.id %>" <%= checked %>/>
+						<span></span>
 					</label>
 					<span class="chip medium clear"><i class="fas fa-tag"></i> <%= mediaTypes[item.type] %></span>
 				</div>
@@ -29,7 +44,7 @@
 <div class="bottom-space"></div>
 
 <div class="fixed-action-btn">
-	<a class="btn-floating btn-large waves-effect waves-light green" onclick="savePreferredMedia()">
+	<a class="btn-floating btn-large waves-effect waves-light green" onclick="saveMedia()">
 		<i class="material-icons">check</i>
 	</a>
 </div>
