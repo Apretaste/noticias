@@ -1,6 +1,6 @@
 // on page load...
 //
-$(document).ready(function() {
+$(document).ready(function () {
 	// initialize components
 	$('.tabs').tabs();
 	$('.modal').modal();
@@ -8,6 +8,11 @@ $(document).ready(function() {
 
 	// todo
 });
+
+// Open article
+function openStory(storyId) {
+	apretaste.send({'command': 'NOTICIAS HISTORIA', 'data': {'id': storyId}});
+}
 
 // search for an article
 //
@@ -19,7 +24,7 @@ function searchArticles() {
 
 	// create object to send to the backend
 	names.forEach(function (prop) {
-		var value = $('#'+prop).val();
+		var value = $('#' + prop).val();
 		if (value != null && value !== "" && value !== "all") {
 			data[prop] = value;
 			hasData = true;
@@ -39,13 +44,44 @@ function searchArticles() {
 	})
 }
 
+function searchByMedia(mediaId) {
+	// start the search
+	apretaste.send({
+		command: 'NOTICIAS',
+		data: {search: {media: mediaId}}
+	});
+}
+
+function searchByPubDate(pubDate) {
+	var date = moment(pubDate); // 'YYYY-DD-MM'
+
+	// start the search
+	apretaste.send({
+		command: 'NOTICIAS',
+		data: {
+			search: {
+				minDate: date.subtract('d', 1).format('DD/MM/YY'),
+				maxDate: date.add('d', 1).format('DD/MM/YY')
+			}
+		}
+	});
+}
+
+function searchByTag(tag) {
+	// start the search
+	apretaste.send({
+		command: 'NOTICIAS',
+		data: {search: {tag: tag}}
+	});
+}
+
 // save the media types
 //
 function saveMedia() {
 	// get the selected IDs
 	var selectedId = [];
-	$('.media-checker input').each(function(i, e){
-		if($(e).prop('checked')) selectedId.push($(e).attr('id'));
+	$('.media-checker input').each(function (i, e) {
+		if ($(e).prop('checked')) selectedId.push($(e).attr('id'));
 	});
 
 	// display error if no media was selected
@@ -138,12 +174,12 @@ function sendCommentCallback() {
 	// create comment HTML
 	var element =
 		"<li class='right' id='last'>" +
-		"	<div class='person-avatar circle' face='"+avatar+"' color='"+avatarColor+"' size='30'></div>" +
+		"	<div class='person-avatar circle' face='" + avatar + "' color='" + avatarColor + "' size='30'></div>" +
 		"	<div class='head'>" +
-		"		<a class='"+gender+"'>@"+username+"</a>" +
-		"		<span class='date'>"+moment().format('MMM D, YYYY h:mm A')+"</span>" +
+		"		<a class='" + gender + "'>@" + username + "</a>" +
+		"		<span class='date'>" + moment().format('MMM D, YYYY h:mm A') + "</span>" +
 		"	</div>" +
-		"	<span class='text'>"+comment+"</span>" +
+		"	<span class='text'>" + comment + "</span>" +
 		"</li>";
 
 	// add comment to the list
@@ -161,7 +197,7 @@ function sendCommentCallback() {
 
 	// increase number of comments
 	var commentsCounter = $('#comments-counter');
-	commentsCounter.html(parseInt(commentsCounter.html())+1);
+	commentsCounter.html(parseInt(commentsCounter.html()) + 1);
 }
 
 // callback to post on the board
@@ -178,11 +214,11 @@ function sendPostCallback() {
 	var element =
 		"<div class='card' id='last'>" +
 		"	<div class='card-person grey lighten-5'>" +
-		"		<div class='person-avatar circle left' face='"+avatar+"' color='"+avatarColor+"' size='30'></div>" +
-		"		<a href='#!' class='"+gender+"'>@"+username+"</a>" +
-		"		<span class='chip tiny clear right'><i class='material-icons icon'>perm_contact_calendar</i> "+moment().format('MMM D, h:mm A')+"</span>" +
+		"		<div class='person-avatar circle left' face='" + avatar + "' color='" + avatarColor + "' size='30'></div>" +
+		"		<a href='#!' class='" + gender + "'>@" + username + "</a>" +
+		"		<span class='chip tiny clear right'><i class='material-icons icon'>perm_contact_calendar</i> " + moment().format('MMM D, h:mm A') + "</span>" +
 		"	</div>" +
-		"	<div class='card-content'><p>"+comment+"</p></div>" +
+		"	<div class='card-content'><p>" + comment + "</p></div>" +
 		"</div>";
 
 	// add comment to the list
@@ -201,7 +237,7 @@ function sendPostCallback() {
 // escape HTML data
 //
 function escapeHTML(text) {
-	var htmlEscapes = {'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#x27;','/': '&#x2F;'};
+	var htmlEscapes = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;', '/': '&#x2F;'};
 	var htmlEscaper = /[&<>"'\/]/g;
 	return ('' + text).replace(htmlEscaper, function (match) {
 		return htmlEscapes[match];

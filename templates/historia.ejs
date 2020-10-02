@@ -105,7 +105,7 @@
 				<li class="<%= item.position %>" id="<%= item.id %>">
 					<div class="person-avatar circle" face="<%= item.avatar %>" color="<%= item.avatarColor %>" size="30" onclick="openProfile('<%= item.username %>')"></div>
 					<div class="head">
-						<a onclick="apretaste.send({'command':'PERFIL', 'data':{'username': '@<%= item.username %>'}})" class="<%= item.gender %>">@<%= item.username %></a>
+						<a onclick="apretaste.send({'command':'PERFIL', 'data':{'username': '@<%= item.username %>'}})" class="<%= item.gender ?? 'black-text'%>">@<%= item.username %></a>
 						<span class="date"><%= moment(item.inserted).format('MMM D, YYYY h:mm A') %></span>
 					</div>
 					<span class="text"><%= item.content %></span>

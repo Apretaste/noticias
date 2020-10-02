@@ -28,17 +28,19 @@
 			<p class="middle-center center grey-text">No hemos encontrado ninguna noticia para mostrarte.</p>
 		<% } else { %>
 			<% articles.forEach(function (item) { %>
-				<div class="card" onclick="apretaste.send({'command': 'NOTICIAS HISTORIA', 'data':{'id': '<%= item.id %>'}})">
+				<div class="card">
 					<!-- image -->
 					<% if(item.image) { %>
-						<div class="card-image waves-effect waves-block waves-light">
+						<div class="card-image waves-effect waves-block waves-light" onclick="openStory('<%= item.id %>')">
 							<img src="{{APP_IMAGE_PATH}}/<%= item.image %>">
 						</div>
 					<% } %>
 
 					<div class="card-content">
 						<!-- title -->
-						<span class="card-title grey-text text-darken-4"><%= item.title %></span>
+						<span class="card-title grey-text text-darken-4" onclick="openStory('<%= item.id %>')">
+							<%= item.title %>
+						</span>
 
 						<!-- author -->
 						<% if(item.author != '') { %>
@@ -48,28 +50,30 @@
 							</span>
 						<% } %>
 
-						<!-- media -->
-						<span class="chip tiny grey lighten-1">
+                        <!-- media -->
+                        <span class="chip tiny grey lighten-1" onclick="searchByMedia('<%= item.media_id %>')">
 							<i class="far fa-newspaper"></i>
 							<%= item.mediaCaption %>
 						</span>
 
-						<!-- number of comments -->
-						<span class="chip tiny grey lighten-1">
+                        <!-- number of comments -->
+                        <span class="chip tiny grey lighten-1">
 							<i class="far fa-comments"></i>
 							<%= item.comments %>
 						</span>
 
-						<!-- publication date -->
-						<span class="chip tiny grey lighten-1">
+                        <!-- publication date -->
+                        <span class="chip tiny grey lighten-1" onclick="searchByPubDate('<%= item.pubDate %>')">
 							<i class="far fa-calendar"></i>
 							<%= moment(item.pubDate).format('MMM D, YYYY h:mm A') %>
 						</span>
 
-						<!-- tags -->
-						<% item.tags.forEach(function (tag) { %>
-							<span class="chip tiny"><%= tag %></span>
-						<% }) %>
+                        <!-- tags -->
+                        <% item.tags.forEach(function (tag) { %>
+                            <span class="chip tiny" onclick="searchByTag('<%= tag %>')">
+                                <%= tag %>
+                            </span>
+                        <% }) %>
 					</div>
 				</div>
 			<% }) %>

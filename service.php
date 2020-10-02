@@ -46,9 +46,7 @@ class Service
 			// calculate total number of pages
 			$totalPages = Database::queryCache("SELECT COUNT(id) AS total FROM _news_articles WHERE media_id IN($preferredMedia)")[0]->total;
 			$totalPages = intval($totalPages / 20) + ($totalPages % 20 > 0 ? 1 : 0);
-		}
-
-		// if searching...
+		} // if searching...
 		else {
 			// do not search by media and type at the same time
 			if (isset($search->media) && isset($search->type)) {
@@ -65,33 +63,37 @@ class Service
 						$escapedTitle = Database::escape($value);
 						$escapedTitle = implode(', ', explode(' ', $escapedTitle));
 						$filters .= "AND MATCH(`title`) AGAINST('$escapedTitle') ";
-					break;
+						break;
 					case 'media':
 						$mediaCaption = Database::queryCache("SELECT caption FROM _news_media WHERE id='$value'", Database::CACHE_YEAR);
 						if (!empty($mediaCaption)) $searchTags[] = $mediaCaption[0]->caption;
 						$filters .= "AND A.media_id = '$value' ";
-					break;
+						break;
 					case 'minDate':
 						$searchTags[] = "Despues del $value";
 						$filters .= "AND A.pubDate >= STR_TO_DATE('$value','%d/%m/%Y') ";
-					break;
+						break;
 					case 'maxDate':
 						$searchTags[] = "Antes del $value";
 						$filters .= "AND A.pubDate <= STR_TO_DATE('$value','%d/%m/%Y') ";
-					break;
+						break;
 					case 'minComments':
 						$searchTags[] = "+$value comentarios";
 						$filters .= "AND A.comments >= '$value' ";
-					break;
+						break;
 					case 'type':
 						$searchTags[] = ucfirst($value);
 						$filters .= "AND B.type = '$value' ";
-					break;
+						break;
 					case 'category':
 						$categoryCaption = Database::queryCache("SELECT caption FROM _news_categories WHERE id='$value'", Database::CACHE_YEAR);
 						if (!empty($categoryCaption)) $searchTags[] = $categoryCaption[0]->caption;
 						$filters .= "AND A.category_id = '$value' ";
-					break;
+						break;
+					case  'tag':
+						$searchTags[] = "#$value";
+						$filters .= "AND MATCH(`tags`) AGAINST('$value') ";
+						break;
 				}
 			}
 		}
@@ -102,7 +104,7 @@ class Service
 		// pull the articles to show
 		$articles = Database::queryCache("
 			SELECT 
-				A.id, A.title, A.pubDate, A.author, A.image, A.imageLink, 
+				A.id, A.title, A.pubDate, A.author, A.image, A.imageLink, A.media_id,
 				A.description, A.comments, A.tags, B.name AS mediaName, 
 				B.caption AS mediaCaption, C.caption AS categoryCaption
 			FROM _news_articles A 
@@ -129,9 +131,7 @@ class Service
 				// if the image exists, pull it
 				if (file_exists($imgPath)) {
 					$image = file_get_contents($imgPath);
-				}
-
-				// if the image do not exist...
+				} // if the image do not exist...
 				else {
 					// try to get it from the internet
 					$image = Crawler::get($article->imageLink, 'GET', null, [], [], $info);
@@ -154,9 +154,9 @@ class Service
 		// create content for the view
 		$content = [
 			'articles' => $articles,
-			'page' => $currentPage, 
+			'page' => $currentPage,
 			'pages' => $totalPages,
-			'availableMedia' => $availableMedia, 
+			'availableMedia' => $availableMedia,
 			'mediaTypes' => self::$mediaTypes,
 			'searchTags' => $searchTags,
 		];
@@ -197,7 +197,7 @@ class Service
 			WHERE A.id = '$id'");
 
 		// return an error if no articles were found
-		if(empty($article)) {
+		if (empty($article)) {
 			return $response->setTemplate('message.ejs');
 		}
 
@@ -264,7 +264,7 @@ class Service
 		$article->avatarColor = $request->person->avatarColor;
 
 		// set category as false if not exist
-		if(empty($article->category_id)) {
+		if (empty($article->category_id)) {
 			$article->category_id = false;
 			$article->categoryCaption = false;
 		}
