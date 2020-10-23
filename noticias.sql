@@ -74,6 +74,7 @@ INSERT INTO `_news_media` (`id`, `name`, `caption`, `logo`, `description`, `type
 (5, 'cubanet', 'Cubanet', 'cubanet.png', 'Noticias de la prensa independiente cubana desde 1994: Derechos Humanos, presos políticos y sociedad civil', 'politics', 0, '2020-07-17 14:59:28'),
 (6, 'marti', 'Marti Noticias', 'marti.png', 'Radio Televisión Martí difunde informaciones originadas dentro de Cuba y reporta el acontecer noticioso mundial para todos los cubanos', 'politics', 0, '2020-07-17 16:03:36'),
 (7, 'granma', 'Granma', 'granma.png', 'Periódico Granma, fundado el 3 de octubre de 1965. Su primera edición circuló el 4 de octubre.', 'politics', 0, '2020-07-17 17:15:50');
+(8, 'cubadebate', 'Cuba Debate', 'cubadebate.jpg', 'Medio de información alternativa que alerta sobre campañas de difamación contra Cuba.', 'politics', 0, '2020-10-21 17:15:50');
 
 INSERT INTO `_news_categories` (`id`, `media_id`, `caption`) VALUES
 (1, 1, 'Cuba'),
@@ -98,3 +99,4 @@ INSERT INTO `_news_sources` (`id`, `media_id`, `associated_category`, `name`, `s
 (11, 5, NULL, 'Cubanet Main', 'http://fetchrss.com/rss/5d7945108a93f8666f8b45675e4f5cb88a93f86d3d8b4567.xml', 'Cubanet'),
 (12, 6, NULL, 'Marti Main', 'http://www.martinoticias.com/api/epiqq', 'Marti'),
 (13, 7, NULL, 'Granma Main', 'http://www.granma.cu/feed', 'Granma');
+(14, 8, NULL, 'Cubadebate Main', 'http://www.cubadebate.cu/feed', 'Cubadebate');
