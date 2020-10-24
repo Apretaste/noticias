@@ -42,15 +42,15 @@
 							<p><%= item.title %></p>
 
 							<!-- cited article's date -->
-							<span class="chip tiny grey"><i class="fa fa-calendar"></i> <%= moment(item.pubDate).format('MMM D, YYYY h:mm A') %></span>
+							<span class="chip tiny"><i class="fa fa-calendar"></i> <%= moment(item.pubDate).format('MMM D, YYYY h:mm A') %></span>
 
 							<!-- cited article's author -->
 							<% if(item.author != ''){ %>
-								<span class="chip tiny grey"><i class="fa fa-user"></i> <%= item.author %></span>
+								<span class="chip tiny"><i class="fa fa-user"></i> <%= item.author %></span>
 							<% } %>
 
 							<!-- cited article's media -->
-							<span class="chip tiny grey"><i class="fa fa-tag"></i> <%= item.mediaCaption %></span>
+							<span class="chip tiny"><i class="fa fa-tag"></i> <%= item.mediaCaption %></span>
 						</blockquote>
 					<% } %>
 				</div>
