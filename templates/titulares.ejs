@@ -10,19 +10,17 @@
 
 <div class="row">
 	<!-- SEARCH TAGS -->
-
 	<% if(searchTags.length > 0) { %>
 		<div class="col s12">
 			<div class="tags">
 				<% searchTags.forEach(function (tag) { %>
-					<span class="chip tiny"><%= tag %></span>
+					<span class="chip tiny"> <%= tag %></span>
 				<% }) %>
 			</div>
 		</div>
 	<% } %>
 
 	<!-- ARTICLES -->
-
 	<div class="col s12">
 		<% if(articles.length == 0) { %>
 			<p class="middle-center center grey-text">No hemos encontrado ninguna noticia para mostrarte.</p>
@@ -45,35 +43,29 @@
 						<!-- author -->
 						<% if(item.author != '') { %>
 							<span class="chip tiny grey lighten-1">
-								<i class="far fa-user"></i>
-								<%= item.author %>
+								<i class="far fa-user"></i> <%= item.author %>
 							</span>
 						<% } %>
 
-                        <!-- media -->
-                        <span class="chip tiny grey lighten-1" onclick="searchByMedia('<%= item.media_id %>')">
-							<i class="far fa-newspaper"></i>
-							<%= item.mediaCaption %>
+						<!-- media -->
+						<span class="chip tiny grey lighten-1" onclick="searchByMedia('<%= item.media_id %>')">
+							<i class="far fa-newspaper"></i> <%= item.mediaCaption %>
 						</span>
 
-                        <!-- number of comments -->
-                        <span class="chip tiny grey lighten-1">
-							<i class="far fa-comments"></i>
-							<%= item.comments %>
+						<!-- number of comments -->
+						<span class="chip tiny grey lighten-1">
+							<i class="far fa-comments"></i> <%= item.comments %>
 						</span>
 
-                        <!-- publication date -->
-                        <span class="chip tiny grey lighten-1" onclick="searchByPubDate('<%= item.pubDate %>')">
-							<i class="far fa-calendar"></i>
-							<%= moment(item.pubDate).format('MMM D, YYYY h:mm A') %>
+						<!-- publication date -->
+						<span class="chip tiny grey lighten-1" onclick="searchByPubDate('<%= item.pubDate %>')">
+							<i class="far fa-calendar"></i> <%= moment(item.pubDate).format('MMM D, YYYY h:mm A') %>
 						</span>
 
-                        <!-- tags -->
-                        <% item.tags.forEach(function (tag) { %>
-                            <span class="chip tiny" onclick="searchByTag('<%= tag %>')">
-                                <%= tag %>
-                            </span>
-                        <% }) %>
+						<!-- tags -->
+						<% item.tags.forEach(function (tag) { %>
+							<span class="chip tiny" onclick="searchByTag('<%= tag %>')"><%= tag %></span>
+						<% }) %>
 					</div>
 				</div>
 			<% }) %>

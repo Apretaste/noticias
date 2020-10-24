@@ -5,14 +5,7 @@ $(document).ready(function () {
 	$('.tabs').tabs();
 	$('.modal').modal();
 	$('select').formSelect();
-
-	// todo
 });
-
-// Open article
-function openStory(storyId) {
-	apretaste.send({'command': 'NOTICIAS HISTORIA', 'data': {'id': storyId}});
-}
 
 // search for an article
 //
@@ -44,6 +37,8 @@ function searchArticles() {
 	})
 }
 
+// search by media
+//
 function searchByMedia(mediaId) {
 	// start the search
 	apretaste.send({
@@ -52,6 +47,8 @@ function searchByMedia(mediaId) {
 	});
 }
 
+// search by publication date
+//
 function searchByPubDate(pubDate) {
 	var date = moment(pubDate); // 'YYYY-DD-MM'
 
@@ -67,11 +64,22 @@ function searchByPubDate(pubDate) {
 	});
 }
 
+// search by tag
+//
 function searchByTag(tag) {
 	// start the search
 	apretaste.send({
 		command: 'NOTICIAS',
 		data: {search: {tag: tag}}
+	});
+}
+
+// open article
+//
+function openStory(storyId) {
+	apretaste.send({
+		command: 'NOTICIAS HISTORIA',
+		data: {id: storyId}
 	});
 }
 

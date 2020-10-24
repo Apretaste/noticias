@@ -26,7 +26,7 @@
 				<div class="card-person grey lighten-5">
 					<!-- avatar and username -->
 					<div class="person-avatar circle left" face="<%= item.avatar %>" color="<%= item.avatarColor %>" size="30"></div>
-					<a href="#!" class="<%= item.gender ?? 'black-text' %>" onclick="apretaste.send({'command':'PERFIL', 'data':{'username':'@<%= item.username %>'}})">@<%= item.username %></a>
+					<a href="#!" class="<%= item.gender %> black-text" onclick="apretaste.send({'command':'PERFIL', 'data':{'username':'@<%= item.username %>'}})">@<%= item.username %></a>
 
 					<!-- calendar -->
 					<span class="chip tiny clear right"><i class="material-icons icon">perm_contact_calendar</i> <%= moment(item.inserted).format('MMM D, h:mm A') %></span>

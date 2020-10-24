@@ -187,3 +187,13 @@ ul.chat li {
 	background-repeat: no-repeat;
 	background-size: cover;
 }
+
+/* GENDER COLORS */
+
+.M {
+	color: #5c6bc0 !important;
+}
+
+.F {
+	color: #ec407a !important;
+}
