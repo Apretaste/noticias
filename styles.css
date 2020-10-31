@@ -51,7 +51,7 @@
 }
 
 .chip.clear {
-	color: rgba(0,0,0,0.87);
+	color: rgba(0, 0, 0, 0.87);
 	margin: 0px;
 	padding: 0px;
 	background-color: transparent;
@@ -196,4 +196,21 @@ ul.chat li {
 
 .F {
 	color: #ec407a !important;
+}
+
+/* Comments actions */
+.chat .actions {
+	margin-bottom: -5px;
+}
+
+.chat .actions .chip {
+	margin-right: 30px;
+}
+
+.chat .left .actions .chip {
+	color: #546e7a;
+}
+
+.chat .right .actions .chip {
+	color: #eceff1;
 }

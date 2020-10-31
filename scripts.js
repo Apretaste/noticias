@@ -5,6 +5,26 @@ $(document).ready(function () {
 	$('.tabs').tabs();
 	$('.modal').modal();
 	$('select').formSelect();
+
+	// set reminder function
+	$('.remainder').on('input', function () {
+		// get values
+		var message = $(this).val().trim();
+		var maxlength = $(this).attr('maxlength');
+		var counter = $("label[for='" + $(this).attr('id') + "'] span");
+
+		// calculate the reminder
+		var remainder = (message.length <= maxlength) ? (maxlength - message.length) : 0;
+
+		// restrict message to maxlength
+		if (remainder <= 0) {
+			message = message.substring(0, maxlength);
+			$(this).val(message);
+		}
+
+		// update the counter with the remainder amount
+		counter.html(message.length);
+	})
 });
 
 // search for an article
@@ -240,6 +260,64 @@ function sendPostCallback() {
 
 	// re-create avatar
 	setElementAsAvatar($('#last .person-avatar').get());
+}
+
+
+function like(id, type) {
+	var element = $('#comments #' + id);
+	if (type == "like" && element.attr('liked') == true || type == "unlike" && element.attr('unliked') == true) return;
+
+	apretaste.send({
+		'command': 'NOTICIAS ' + type,
+		'data': {'id': id},
+		'callback': {
+			'name': 'likeCallback',
+			'data': JSON.stringify({
+				'id': id,
+				'type': type
+			})
+		},
+		'redirect': false
+	});
+}
+
+function likeCallback(data) {
+	data = JSON.parse(data);
+	var id = data.id;
+	var type = data.type;
+	var comment = $('#comments #' + id);
+
+	if (type == "like") {
+		comment.attr('liked', 'true');
+		comment.attr('unliked', 'false');
+	} else {
+		comment.attr('unliked', 'true');
+		comment.attr('liked', 'false');
+	}
+
+	var counter = type == 'like' ? 'unlike' : 'like';
+	var span = $('#' + id + ' span.' + type + ' span');
+	var count = parseInt(span.html());
+	span.html(count + 1);
+
+	if ($('#' + id + ' span.' + counter).attr('onclick') == null) {
+		span = $('#' + id + ' span.' + counter + ' span');
+		count = parseInt(span.html());
+		span.html(count - 1);
+		$('#' + id + ' span.' + counter).attr('onclick', "like('" + id + "','" + counter + "')");
+	}
+
+	$('#' + id + ' span.' + type).removeAttr('onclick');
+}
+
+function replyUser(user) {
+	var comment = $('#comment');
+	var currentComment = comment.val();
+
+	if (currentComment.length === 0) comment.val('@' + user);
+	else comment.val(currentComment + ' @' + user);
+	M.Modal.getInstance($('#commentModal')).open();
+	comment.focus();
 }
 
 // escape HTML data

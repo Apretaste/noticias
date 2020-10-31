@@ -1,6 +1,7 @@
 <?php
 
 use Apretaste\Level;
+use Apretaste\Notifications;
 use Apretaste\Person;
 use Apretaste\Request;
 use Apretaste\Response;
@@ -220,8 +221,10 @@ class Service
 		// get the comments of the article
 		$article->comments = Database::query("
 			SELECT 
-				A.content, A.inserted, B.username, B.avatar, B.avatarColor, B.gender,
-				IF(A.id_person = {$request->person->id}, 'right', 'left') AS position
+				A.id, A.content, A.inserted, A.likes, A.unlikes, B.username, B.avatar, B.avatarColor, B.gender,
+				IF(A.id_person = {$request->person->id}, 'right', 'left') AS position,
+				(SELECT COUNT(comment) FROM _news_comments_actions WHERE comment=A.id AND A.id_person='{$request->person->id}' AND action='like') > 0 AS liked,
+				(SELECT COUNT(comment) FROM _news_comments_actions WHERE comment=A.id AND A.id_person='{$request->person->id}' AND action='unlike') > 0 AS unliked
 			FROM _news_comments A 
 			LEFT JOIN person B ON A.id_person = B.id 
 			WHERE A.id_article='{$article->id}' 
@@ -321,10 +324,12 @@ class Service
 		// get all the comments
 		$comments = Database::query("
 			SELECT 
-				A.id_article, A.content, A.inserted, 
+				A.id, A.id_article, A.content, A.inserted, A.likes, A.unlikes,
 				B.username, B.avatar, B.avatarColor, B.gender,
 				C.title, C.pubDate, C.author, D.caption AS mediaCaption,
-				IF(A.id_person = {$request->person->id}, 'right', 'left') AS position
+				IF(A.id_person = {$request->person->id}, 'right', 'left') AS position,
+				(SELECT COUNT(comment) FROM _news_comments_actions WHERE comment=A.id AND A.id_person='{$request->person->id}' AND action='like') > 0 AS liked,
+				(SELECT COUNT(comment) FROM _news_comments_actions WHERE comment=A.id AND A.id_person='{$request->person->id}' AND action='unlike') > 0 AS unliked
 			FROM _news_comments A 
 			LEFT JOIN person B ON A.id_person = B.id 
 			LEFT JOIN _news_articles C ON C.id = A.id_article
@@ -379,6 +384,7 @@ class Service
 	 *
 	 * @param Request $request
 	 * @param Response $response
+	 * @throws \Framework\Alert
 	 */
 	public function _comentar(Request $request, Response $response)
 	{
@@ -390,6 +396,11 @@ class Service
 		// get comment data
 		$comment = $request->input->data->comment;
 		$articleId = $request->input->data->article ?? false;
+
+		// notify users mentioned
+		$mentions = $this->findUsersMentionedOnText($comment, $request->person->id);
+		$mentionText = "@{$request->person->username} le ha mencionado en una noticia";
+		$mentionLink = "{'command':'NOTICIAS HISTORIA', 'data':{'id':'$articleId'}}";
 
 		if ($articleId) {
 			// check the note ID is valid
@@ -414,7 +425,108 @@ class Service
 			Database::query("
 				INSERT INTO _news_comments (id_person, content) 
 				VALUES ('{$request->person->id}', '$comment')");
+
+			$mentionText = "@{$request->person->username} le ha mencionado en un comentario en noticias";
+			$mentionLink = "{'command':'NOTICIAS COMENTARIOS'}";
 		}
+
+		foreach ($mentions as $mentionId) {
+			Notifications::alert(
+				$mentionId, $mentionText, 'comment',
+				$mentionLink
+			);
+		}
+	}
+
+	/**
+	 * The user likes a note
+	 *
+	 * @param Request $request
+	 * @param Response $response
+	 * @author salvipascual
+	 */
+	public function _like(Request $request, Response $response)
+	{
+		$type = 'comment';
+		$actionsTable = '_news_comments_actions';
+		$commentsTable = '_news_comments';
+		$commentId = $request->input->data->id;
+
+		if ($commentId === 'last') {
+			$commentId = Database::query("SELECT MAX(id) AS id FROM $commentsTable WHERE id_person = '{$request->person->id}'")[0]->id;
+		}
+
+		// check if the user already liked this note
+		$res = Database::query("SELECT * FROM $actionsTable WHERE id_person={$request->person->id} AND $type='{$commentId}'");
+		$comment = Database::query("SELECT id_person, likes FROM $commentsTable WHERE id='{$commentId}'");
+
+		if (!empty($comment)) {
+			$comment = $comment[0];
+
+			if (!empty($res)) {
+				if ($res[0]->action === 'unlike') {
+					// update previous vote
+					Database::query("
+						UPDATE $actionsTable SET `action`='like' WHERE id_person='{$request->person->id}' AND $type='{$commentId}';
+						UPDATE $commentsTable SET likes=likes+1, unlikes=unlikes-1 WHERE id='{$commentId}'"
+					);
+
+					return;
+				} else if ($res[0]->action === 'like') return;
+			}
+
+
+			// add new vote
+			Database::query("
+				INSERT INTO $actionsTable (id_person,$type,action) VALUES ('{$request->person->id}','{$commentId}','like');    
+				UPDATE $commentsTable SET likes=likes+1 WHERE id='{$commentId}';"
+			);
+
+		}
+	}
+
+	/**
+	 * The user unlikes a note
+	 *
+	 * @param Request $request
+	 * @param Response $response
+	 * @author salvipascual
+	 */
+	public function _unlike(Request $request, Response $response): void
+	{
+		$type = 'comment';
+		$actionsTable = '_news_comments_actions';
+		$commentsTable = '_news_comments';
+		$commentId = $request->input->data->id;
+
+		if ($commentId === 'last') {
+			$commentId = Database::query("SELECT MAX(id) AS id FROM $commentsTable WHERE id_person = '{$request->person->id}'")[0]->id;
+		}
+
+		// check if the user already liked this note
+		$res = Database::query("SELECT * FROM $actionsTable WHERE id_person={$request->person->id} AND $type='{$commentId}'");
+		$comment = Database::query("SELECT id_person FROM $commentsTable WHERE id='{$commentId}'");
+
+		// do not continue if note do not exist
+		if (empty($comment)) {
+			return;
+		}
+
+		// delete previos upvote and add new vote
+		if (!empty($res)) {
+			if ($res[0]->action === 'like') {
+				Database::query("
+				UPDATE $actionsTable SET `action`='unlike' WHERE id_person='{$request->person->id}' AND $type='{$commentId}';
+				UPDATE $commentsTable SET likes=likes-1, unlikes=unlikes+1 WHERE id='{$commentId}';");
+			}
+			return;
+		}
+
+		// delete previos vote and add new vote
+		Database::query("
+			INSERT INTO $actionsTable (id_person,$type,action) VALUES ('{$request->person->id}','{$commentId}','unlike');
+			UPDATE $commentsTable SET unlikes=unlikes+1 WHERE id='{$commentId}';"
+		);
 	}
 
 	/**
@@ -430,5 +542,43 @@ class Service
 
 		// convert the CSV to an array of IDs, and return
 		return empty($selectedMedia->selected_media) ? [] : explode(',', $selectedMedia->selected_media);
+	}
+
+
+	/**
+	 * Find all mentions on a text
+	 *
+	 * @param String $text
+	 * @param String $myId
+	 * @return array, [userId]
+	 * @throws \Framework\Alert
+	 * @author ricardo
+	 */
+
+	private function findUsersMentionedOnText(string $text, string $myId): array
+	{
+		// find all users mentioned
+		preg_match_all('/@\w*/', $text, $matches);
+
+		// filter the ones that exist
+		$mentions = [];
+		if (!empty($matches[0])) {
+			// get string of possible matches
+			$usernames = "'" . implode("','", $matches[0]) . "'";
+			$usernames = str_replace('@', '', $usernames);
+			$usernames = str_replace(",'',", ',', $usernames);
+			$usernames = str_replace(",''", '', $usernames);
+			$usernames = str_replace("'',", '', $usernames);
+
+			// check real matches against the database
+			$users = Database::query("SELECT id FROM person WHERE username in ($usernames)");
+
+			// format the return
+			foreach ($users as $user) {
+				if ($user->id != $myId) $mentions[] = $user->id;
+			}
+		}
+
+		return $mentions;
 	}
 }
