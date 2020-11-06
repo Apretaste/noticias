@@ -8,6 +8,7 @@ use Apretaste\Response;
 use Apretaste\Challenges;
 use Framework\Crawler;
 use Framework\Database;
+use Framework\GoogleAnalytics;
 
 class Service
 {
@@ -275,6 +276,9 @@ class Service
 		// complete the challenge
 		Challenges::complete('read-news', $request->person->id);
 
+		// submit to Google Analytics
+		GoogleAnalytics::event('news_read_medium', $article->mediaName);
+
 		// send info to the view
 		$response->setCache('year');
 		$response->setTemplate('historia.ejs', $article, $images);
@@ -420,6 +424,9 @@ class Service
 
 			// complete challenge
 			Challenges::complete('comment-news', $request->person->id);
+
+			// submit to Google Analytics
+			GoogleAnalytics::event('news_comment', $articleId);
 		} else {
 			// insert comment without article
 			Database::query("
@@ -428,6 +435,9 @@ class Service
 
 			$mentionText = "@{$request->person->username} le ha mencionado en un comentario en noticias";
 			$mentionLink = "{'command':'NOTICIAS COMENTARIOS'}";
+
+			// submit to Google Analytics
+			GoogleAnalytics::event('news_comment', 'none');
 		}
 
 		foreach ($mentions as $mentionId) {
