@@ -74,7 +74,8 @@ INSERT INTO `_news_media` (`id`, `name`, `caption`, `logo`, `description`, `type
 (5, 'cubanet', 'Cubanet', 'cubanet.png', 'Noticias de la prensa independiente cubana desde 1994: Derechos Humanos, presos políticos y sociedad civil', 'politics', 0, '2020-07-17 14:59:28'),
 (6, 'marti', 'Marti Noticias', 'marti.png', 'Radio Televisión Martí difunde informaciones originadas dentro de Cuba y reporta el acontecer noticioso mundial para todos los cubanos', 'politics', 0, '2020-07-17 16:03:36'),
 (7, 'granma', 'Granma', 'granma.png', 'Periódico Granma, fundado el 3 de octubre de 1965. Su primera edición circuló el 4 de octubre.', 'politics', 0, '2020-07-17 17:15:50');
-(8, 'cubadebate', 'Cuba Debate', 'cubadebate.jpg', 'Medio de información alternativa que alerta sobre campañas de difamación contra Cuba.', 'politics', 0, '2020-10-21 17:15:50');
+(8, 'cubadebate', 'Cuba Debate', 'cubadebate.jpg', 'Medio de información alternativa que alerta sobre campañas de difamación contra Cuba.', 'politics', 0, '2020-10-21 17:15:50'),
+(9, 'digitalTrends', 'Digital Trends', 'digital_trends.jpg', 'Digital Trends en Español reporta las últimas novedades en tecnología con revisiones, videos, noticias y mucho más.', 'technology', '0', CURRENT_TIMESTAMP);
 
 INSERT INTO `_news_categories` (`id`, `media_id`, `caption`) VALUES
 (1, 1, 'Cuba'),
@@ -83,7 +84,34 @@ INSERT INTO `_news_categories` (`id`, `media_id`, `caption`) VALUES
 (4, 1, 'Cultura'),
 (5, 1, 'Ocio'),
 (6, 1, 'Deportes'),
-(7, 1, 'De Leer');
+(7, 1, 'De Leer'),
+(8, '9', 'Android Army'),
+(9, '9', 'Casa inteligente'),
+(10, '9', 'Comunicados de prensa'),
+(11, '9', 'Electrodomésticos'),
+(12, '9', 'Features'),
+(13, '9', 'Negocios'),
+(14, '9', 'Opinión'),
+(15, '9', 'Redes sociales'),
+(16, '9', 'Telefonía celular'),
+(17, '9', 'Apple'),
+(18, '9', 'Cine en casa'),
+(19, '9', 'Deportes'),
+(20, '9', 'Entretenimiento'),
+(21, '9', 'Fotografía'),
+(22, '9', 'Noticias'),
+(23, '9', 'Press Releases'),
+(24, '9', 'Salud'),
+(25, '9', 'Tendencias'),
+(26, '9', 'Autos'),
+(27, '9', 'Computación'),
+(28, '9', 'Drones'),
+(29, '9', 'Espacio'),
+(30, '9', 'Guías'),
+(31, '9', 'Ofertas'),
+(32, '9', 'Realidad Virtual'),
+(33, '9', 'Tecnología vestible'),
+(34, '9', 'Videojuegos');
 
 INSERT INTO `_news_sources` (`id`, `media_id`, `associated_category`, `name`, `source`, `scraper`) VALUES
 (1, 1, 1, 'DDC Cuba', 'http://fetchrss.com/rss/5d7945108a93f8666f8b45675d7a44858a93f83a5e8b4569.xml', 'Ddc'),
@@ -99,4 +127,32 @@ INSERT INTO `_news_sources` (`id`, `media_id`, `associated_category`, `name`, `s
 (11, 5, NULL, 'Cubanet Main', 'http://fetchrss.com/rss/5d7945108a93f8666f8b45675e4f5cb88a93f86d3d8b4567.xml', 'Cubanet'),
 (12, 6, NULL, 'Marti Main', 'http://www.martinoticias.com/api/epiqq', 'Marti'),
 (13, 7, NULL, 'Granma Main', 'http://www.granma.cu/feed', 'Granma');
-(14, 8, NULL, 'Cubadebate Main', 'http://www.cubadebate.cu/feed', 'Cubadebate');
+(14, 8, NULL, 'Cubadebate Main', 'http://www.cubadebate.cu/feed', 'Cubadebate'),
+(NULL, '9', '8', 'DT Android Army', 'https://es.digitaltrends.com/android/feed/', 'DigitalTrends'),
+(NULL, '9', '9', 'DT Casa inteligente', 'https://es.digitaltrends.com/inteligente/feed/', 'DigitalTrends'),
+(NULL, '9', '10', 'DT Comunicados de prensa', 'https://es.digitaltrends.com/comunicados-de-prensa/feed/', 'DigitalTrends'),
+(NULL, '9', '11', 'DT Electrodomésticos', 'https://es.digitaltrends.com/electrodomesticos/feed/', 'DigitalTrends'),
+(NULL, '9', '12', 'DT Features', 'https://es.digitaltrends.com/features/feed/', 'DigitalTrends'),
+(NULL, '9', '13', 'DT Negocios', 'https://es.digitaltrends.com/negocios/feed/', 'DigitalTrends'),
+(NULL, '9', '14', 'DT Opinión', 'https://es.digitaltrends.com/opinion/feed/', 'DigitalTrends'),
+(NULL, '9', '15', 'DT Redes sociales', 'https://es.digitaltrends.com/sociales/feed/', 'DigitalTrends'),
+(NULL, '9', '16', 'DT Telefonía celular', 'https://es.digitaltrends.com/celular/feed/', 'DigitalTrends'),
+(NULL, '9', '17', 'DT Apple', 'https://es.digitaltrends.com/apple/feed/', 'DigitalTrends'),
+(NULL, '9', '18', 'DT Cine en casa', 'https://es.digitaltrends.com/cine/feed/', 'DigitalTrends'),
+(NULL, '9', '19', 'DT Deportes', 'https://es.digitaltrends.com/deportes/feed/', 'DigitalTrends'),
+(NULL, '9', '20', 'DT Entretenimiento', 'https://es.digitaltrends.com/entretenimiento/feed/', 'DigitalTrends'),
+(NULL, '9', '21', 'DT Fotografía', 'https://es.digitaltrends.com/fotografia/feed/', 'DigitalTrends'),
+(NULL, '9', '22', 'DT Noticias', 'https://es.digitaltrends.com/noticias/feed/', 'DigitalTrends'),
+(NULL, '9', '23', 'DT Press Releases', 'https://es.digitaltrends.com/press-releases/feed/', 'DigitalTrends'),
+(NULL, '9', '24', 'DT Salud', 'https://es.digitaltrends.com/salud/feed/', 'DigitalTrends'),
+(NULL, '9', '25', 'DT Tendencias', 'https://es.digitaltrends.com/tendencias/feed/', 'DigitalTrends'),
+(NULL, '9', '26', 'DT Autos', 'https://es.digitaltrends.com/autos/feed/', 'DigitalTrends'),
+(NULL, '9', '27', 'DT Computación', 'https://es.digitaltrends.com/computadoras/feed/', 'DigitalTrends'),
+(NULL, '9', '28', 'DT Drones', 'https://es.digitaltrends.com/drones/feed/', 'DigitalTrends'),
+(NULL, '9', '29', 'DT Espacio', 'https://es.digitaltrends.com/espacio/feed/', 'DigitalTrends'),
+(NULL, '9', '30', 'DT Guías', 'https://es.digitaltrends.com/guias/feed/', 'DigitalTrends'),
+(NULL, '9', '31', 'DT Ofertas', 'https://es.digitaltrends.com/ofertas/feed/', 'DigitalTrends'),
+(NULL, '9', '32', 'DT Realidad Virtual', 'https://es.digitaltrends.com/realidad-virtual/feed/', 'DigitalTrends'),
+(NULL, '9', '33', 'DT Tecnología vestible', 'https://es.digitaltrends.com/vestibles/feed/', 'DigitalTrends'),
+(NULL, '9', '34', 'DT Videojuegos', 'https://es.digitaltrends.com/videojuego/feed/', 'DigitalTrends');
+
