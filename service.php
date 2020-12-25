@@ -84,7 +84,7 @@ class Service
 						$filters .= "AND A.comments >= '$value' ";
 						break;
 					case 'type':
-						$searchTags[] = ucfirst($value);
+						$searchTags[] = self::$mediaTypes[$value];
 						$filters .= "AND B.type = '$value' ";
 						break;
 					case 'category':
