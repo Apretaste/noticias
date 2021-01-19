@@ -1,11 +1,12 @@
 <?php
 
 use Apretaste\Level;
-use Apretaste\Notifications;
 use Apretaste\Person;
 use Apretaste\Request;
 use Apretaste\Response;
+use Apretaste\Tutorial;
 use Apretaste\Challenges;
+use Apretaste\Notifications;
 use Framework\Crawler;
 use Framework\Database;
 use Framework\GoogleAnalytics;
@@ -21,7 +22,7 @@ class Service
 	 * @param Request $request
 	 * @param Response $response
 	 */
-	public function _main(Request $request, Response &$response)
+	public function _main(Request $request, Response $response)
 	{
 		// get the media selected as prefered
 		$preferredMedia = self::getSelectedMedia($request->person);
@@ -30,6 +31,9 @@ class Service
 		if (empty($preferredMedia)) {
 			return $this->_medios($request, $response);
 		}
+
+		// complete tutorial
+		Tutorial::complete($request->person->id, 'read_news');
 
 		// create function variables
 		$currentPage = $request->input->data->page ?? 1;
