@@ -268,48 +268,20 @@ function like(id, type) {
 	// only allow valid types
 	if (type != "like" && type != "unlike") return;
 
+	// increase the counter
+	var counter = $('#' + id + ' .' + type + ' span');
+	counter.html(parseInt(counter.html()) + 1);
+
+	// block the user from performing other actions
+	$('#'+id+' .like, #'+id+' .unlike').removeAttr('onclick');
+
 	// send the petition
 	apretaste.send({
 		command: 'NOTICIAS ' + type,
 		data: {'id': id},
-		callback: {
-			name: 'likeCallback',
-			data: JSON.stringify({'id': id, 'type': type})
-		},
 		redirect: false,
 		showLoading: false
 	});
-}
-
-// callback for the like
-//
-function likeCallback(data) {
-	data = JSON.parse(data);
-	var id = data.id;
-	var type = data.type;
-	var comment = $('#comments #' + id);
-
-	if (type == "like") {
-		comment.attr('liked', 'true');
-		comment.attr('unliked', 'false');
-	} else {
-		comment.attr('unliked', 'true');
-		comment.attr('liked', 'false');
-	}
-
-	var counter = type == 'like' ? 'unlike' : 'like';
-	var span = $('#' + id + ' span.' + type + ' span');
-	var count = parseInt(span.html());
-	span.html(count + 1);
-
-	if ($('#' + id + ' span.' + counter).attr('onclick') == null) {
-		span = $('#' + id + ' span.' + counter + ' span');
-		count = parseInt(span.html());
-		span.html(count - 1);
-		$('#' + id + ' span.' + counter).attr('onclick', "like('" + id + "','" + counter + "')");
-	}
-
-	$('#' + id + ' span.' + type).removeAttr('onclick');
 }
 
 // replies to a user
