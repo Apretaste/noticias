@@ -262,25 +262,27 @@ function sendPostCallback() {
 	setElementAsAvatar($('#last .person-avatar').get());
 }
 
-
+// creates a like
+//
 function like(id, type) {
-	var element = $('#comments #' + id);
-	if (type == "like" && element.attr('liked') == true || type == "unlike" && element.attr('unliked') == true) return;
+	// only allow valid types
+	if (type != "like" && type != "unlike") return;
 
+	// send the petition
 	apretaste.send({
-		'command': 'NOTICIAS ' + type,
-		'data': {'id': id},
-		'callback': {
-			'name': 'likeCallback',
-			'data': JSON.stringify({
-				'id': id,
-				'type': type
-			})
+		command: 'NOTICIAS ' + type,
+		data: {'id': id},
+		callback: {
+			name: 'likeCallback',
+			data: JSON.stringify({'id': id, 'type': type})
 		},
-		'redirect': false
+		redirect: false,
+		showLoading: false
 	});
 }
 
+// callback for the like
+//
 function likeCallback(data) {
 	data = JSON.parse(data);
 	var id = data.id;
@@ -310,6 +312,8 @@ function likeCallback(data) {
 	$('#' + id + ' span.' + type).removeAttr('onclick');
 }
 
+// replies to a user
+//
 function replyUser(user) {
 	var comment = $('#comment');
 	var currentComment = comment.val();

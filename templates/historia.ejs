@@ -1,147 +1,137 @@
 <div class="row">
-    <div class="col s12" id="article">
-        <!-- TITLE -->
-        <h1><%= title %></h1>
+	<div class="col s12" id="article">
+		<!-- TITLE -->
+		<h1><%= title %></h1>
 
-        <!-- IMAGE -->
-        <% if(image != null) { %>
-            <div class="article-image" style="background-image: url('{{APP_IMAGE_PATH}}<%= image %>');"></div>
-            <p class="blue-grey-text"><%= imageCaption %></p>
-        <% } %>
+		<!-- IMAGE -->
+		<% if(image != null) { %>
+			<div class="article-image" style="background-image: url('{{APP_IMAGE_PATH}}<%= image %>');"></div>
+			<p class="blue-grey-text"><%= imageCaption %></p>
+		<% } %>
 
-        <!-- DESCRIPTION -->
-        <% if(description.trim().substr(0, 100) != content.split("\\n\\n")[0].substr(0, 100)) { %>
-            <blockquote><%= description %></blockquote>
-        <% } %>
+		<!-- DESCRIPTION -->
+		<% if(description.trim().substr(0, 100) != content.split("\\n\\n")[0].substr(0, 100)) { %>
+			<blockquote><%= description %></blockquote>
+		<% } %>
 
-        <!-- CONTENT -->
-        <section>
-            <% content.split("\\n\\n").forEach(function(paragraph){ %>
-                <p><%= paragraph %></p>
-            <% }) %>
-        </section>
+		<!-- CONTENT -->
+		<section>
+			<% content.split("\\n\\n").forEach(function(paragraph){ %>
+				<p><%= paragraph %></p>
+			<% }) %>
+		</section>
 
-        <!-- DETAILS OF THE ARTICLE -->
-        <ul class="collection one-line">
-            <!-- author -->
-            <% if(author != ''){ %>
-                <li class="collection-item avatar">
-                    <i class="tiny material-icons circle">person</i>
-                    <span class="title"><%= author %></span>
-                    <p class="blue-grey-text">Autor</p>
-                </li>
-            <% } %>
+		<!-- DETAILS OF THE ARTICLE -->
+		<ul class="collection one-line">
+			<!-- author -->
+			<% if(author != ''){ %>
+				<li class="collection-item avatar">
+					<i class="tiny material-icons circle">person</i>
+					<span class="title"><%= author %></span>
+					<p class="blue-grey-text">Autor</p>
+				</li>
+			<% } %>
 
-            <!-- publication date -->
-            <li class="collection-item avatar">
-                <i class="far fa-newspaper circle"></i>
-                <span class="title"><%= moment(pubDate).format('MMM D, YYYY h:mm A') %></span>
-                <p class="blue-grey-text">Fecha de publicación</p>
-            </li>
+			<!-- publication date -->
+			<li class="collection-item avatar">
+				<i class="far fa-newspaper circle"></i>
+				<span class="title"><%= moment(pubDate).format('MMM D, YYYY h:mm A') %></span>
+				<p class="blue-grey-text">Fecha de publicación</p>
+			</li>
 
-            <!-- source -->
-            <li class="collection-item avatar">
-                <i class="far fa-newspaper circle"></i>
-                <span class="title"><%= source %></span>
-                <p class="blue-grey-text">Medio de prensa</p>
-                <a onclick="apretaste.send({command: 'NOTICIAS', data: {search: {media: media_id}}})"
-                   class="secondary-content">
-                    <i class="material-icons">arrow_forward</i>
-                </a>
-            </li>
+			<!-- source -->
+			<li class="collection-item avatar">
+				<i class="far fa-newspaper circle"></i>
+				<span class="title"><%= source %></span>
+				<p class="blue-grey-text">Medio de prensa</p>
+				<a onclick="apretaste.send({command: 'NOTICIAS', data: {search: {media: media_id}}})" class="secondary-content">
+					<i class="material-icons">arrow_forward</i>
+				</a>
+			</li>
 
-            <!-- category -->
-            <% if(category_id) { %>
-                <li class="collection-item avatar">
-                    <i class="fas fa-tag circle"></i>
-                    <span class="title"><%= categoryCaption %></span>
-                    <p class="blue-grey-text">Categoría</p>
-                    <a onclick="apretaste.send({command: 'NOTICIAS', data: {search: {category: category_id}}})"
-                       class="secondary-content">
-                        <i class="material-icons">arrow_forward</i>
-                    </a>
-                </li>
-            <% } %>
-        </ul>
-    </div>
+			<!-- category -->
+			<% if(category_id) { %>
+				<li class="collection-item avatar">
+					<i class="fas fa-tag circle"></i>
+					<span class="title"><%= categoryCaption %></span>
+					<p class="blue-grey-text">Categoría</p>
+					<a onclick="apretaste.send({command: 'NOTICIAS', data: {search: {category: category_id}}})" class="secondary-content">
+						<i class="material-icons">arrow_forward</i>
+					</a>
+				</li>
+			<% } %>
+		</ul>
+	</div>
 </div>
 
 <!-- SIMILAR -->
 
 <div class="row">
-    <% similars.forEach(function (similar) { %>
-        <div class="col s6 similar"
-             onclick="apretaste.send({command:'NOTICIAS HISTORIA', data: {id:'<%= similar.id %>'}})">
-            <div class="card user-card">
-                <div class="content">
-                    <!-- title -->
-                    <p><%= similar.title %></p>
+	<% similars.forEach(function (similar) { %>
+		<div class="col s6 similar"
+			 onclick="apretaste.send({command:'NOTICIAS HISTORIA', data: {id:'<%= similar.id %>'}})">
+			<div class="card user-card">
+				<div class="content">
+					<!-- title -->
+					<p><%= similar.title %></p>
 
-                    <!-- tags -->
-                    <% similar.tags.forEach(function (similarTag) { %>
-                        <span class="chip tiny"><%= similarTag %></span>
-                    <% }) %>
-                </div>
-            </div>
-        </div>
-    <% }) %>
+					<!-- tags -->
+					<% similar.tags.forEach(function (similarTag) { %>
+						<span class="chip tiny"><%= similarTag %></span>
+					<% }) %>
+				</div>
+			</div>
+		</div>
+	<% }) %>
 </div>
 
 <!-- COMMENTS -->
 
 <div class="row">
-    <div class="col s12">
-        <!-- comments count -->
-        <span class="chip medium clear">
+	<div class="col s12">
+		<!-- comments count -->
+		<span class="chip medium clear">
 			<i class="fas fa-comments"></i> <span id="comments-counter"><%= comments.length %></span> Comentarios
 		</span>
 
-        <!-- no comments message -->
-        <% if(comments.length == 0 && !isGuest) { %>
-            <div id="no-comments">Sé el primero en comentar</div>
-        <% } %>
+		<!-- no comments message -->
+		<% if(comments.length == 0 && !isGuest) { %>
+			<div id="no-comments">Sé el primero en comentar</div>
+		<% } %>
 
-        <!-- list of comments -->
-        <ul class="chat" id="comments">
-            <% comments.forEach(function(item) { %>
-                <li class="<%= item.position %>" id="<%= item.id %>">
-                    <div class="person-avatar circle" face="<%= item.avatar %>" color="<%= item.avatarColor %>"
-                         size="30" onclick="openProfile('<%= item.username %>')"></div>
-                    <div class="head">
-                        <a onclick="apretaste.send({'command':'PERFIL', 'data':{'username': '@<%= item.username %>'}})"
-                           class="<%= item.gender %> black-text">@<%= item.username %></a>
-                        <span class="date"><%= moment(item.inserted).format('MMM D, YYYY h:mm A') %></span>
-                    </div>
-                    <span class="text"><%= item.content %></span>
-                    <br>
+		<!-- list of comments -->
+		<ul class="chat" id="comments">
+			<% comments.forEach(function(item) { %>
+				<li class="<%= item.position %>" id="<%= item.id %>">
+					<div class="person-avatar circle" face="<%= item.avatar %>" color="<%= item.avatarColor %>" size="30" onclick="openProfile('<%= item.username %>')"></div>
+					<div class="head">
+						<a onclick="apretaste.send({'command':'PERFIL', 'data':{'username': '@<%= item.username %>'}})" class="<%= item.gender %> black-text">@<%= item.username %></a>
+						<span class="date"><%= moment(item.inserted).format('MMM D, YYYY h:mm A') %></span>
+					</div>
+					<span class="text"><%= item.content %></span>
+					<br>
 
-                    <div class="actions">
-                        <span class="chip clear like"
-                        <% if(item.liked != true){ %> onclick="like('<%= item.id %>','like', 'item');"
-                                <% } %>
-                        >
-                            <i class="fas fa-thumbs-up"></i>
-                            <span><%= item.likes %></span>
-                        </span>
+					<div class="actions">
+						<span class="chip clear like" onclick="like('<%= item.id %>', 'like')">
+							<i class="fas fa-thumbs-up"></i>
+							<span><%= item.likes %></span>
+						</span>
 
-                        <span class="chip clear unlike"
-                        <% if(item.unliked != true){ %> onclick="like('<%= item.id %>','unlike', 'item')"
-                                <% } %>
-                        >
-                            <i class="fas fa-thumbs-down"></i>
-                            <span><%= item.unlikes %></span>
-                        </span>
+						<span class="chip clear unlike" onclick="like('<%= item.id %>', 'unlike')">
+							<i class="fas fa-thumbs-down"></i>
+							<span><%= item.unlikes %></span>
+						</span>
 
-                        <% if(item.username != username){ %>
-                            <span class="chip clear" onclick="replyUser('<%= item.username %>')">
-                                <i class="fas fa-reply"></i>
-                            </span>
-                        <% } %>
-                    </div>
-                </li>
-            <% }) %>
-        </ul>
-    </div>
+						<% if(item.username != username){ %>
+							<span class="chip clear" onclick="replyUser('<%= item.username %>')">
+								<i class="fas fa-reply"></i>
+							</span>
+						<% } %>
+					</div>
+				</li>
+			<% }) %>
+		</ul>
+	</div>
 </div>
 
 <!-- BUTTONS -->
@@ -149,75 +139,74 @@
 <div class="bottom-space"></div>
 
 <div class="fixed-action-btn">
-    <% if(isGuest) { %>
-        <a class="btn-floating btn-large waves-effect waves-light green"
-           onclick="apretaste.send({'command':'NOTICIAS'})">
-            <i class="material-icons">arrow_back</i>
-        </a>
-    <% } else { %>
-        <a class="btn-floating waves-effect waves-light grey third modal-trigger" href="#shareModal">
-            <i class="material-icons">share</i>
-        </a>
-        <a class="btn-floating waves-effect waves-light grey second" onclick="apretaste.send({'command':'NOTICIAS'})">
-            <i class="material-icons">arrow_back</i>
-        </a>
-        <a class="btn-floating btn-large waves-effect waves-light modal-trigger green" href="#commentModal">
-            <i class="material-icons">comment</i>
-        </a>
-    <% } %>
+	<% if(isGuest) { %>
+		<a class="btn-floating btn-large waves-effect waves-light green" onclick="apretaste.send({'command':'NOTICIAS'})">
+			<i class="material-icons">arrow_back</i>
+		</a>
+	<% } else { %>
+		<a class="btn-floating waves-effect waves-light grey third modal-trigger" href="#shareModal">
+			<i class="material-icons">share</i>
+		</a>
+		<a class="btn-floating waves-effect waves-light grey second" onclick="apretaste.send({'command':'NOTICIAS'})">
+			<i class="material-icons">arrow_back</i>
+		</a>
+		<a class="btn-floating btn-large waves-effect waves-light modal-trigger green" href="#commentModal">
+			<i class="material-icons">comment</i>
+		</a>
+	<% } %>
 </div>
 
 <!-- SHARE MODAL -->
 
 <div id="shareModal" class="modal">
-    <input id="articleId" type="hidden" value="<%= id %>">
-    <div class="modal-content">
-        <div class="input-field">
-            <textarea id="message" class="materialize-textarea"></textarea>
-            <label for="message">Escriba un texto para compartir</label>
-        </div>
-        <ul class="collection one-line preview">
-            <li class="collection-item avatar">
-                <i class="fas fa-newspaper material-icons circle"></i>
-                <span class="title"><%= teaser(description) %></span>
-            </li>
-        </ul>
-    </div>
-    <div class="modal-footer">
-        <a href="#!" class="modal-close waves-effect waves-light btn-flat">Cerrar</a>
-        <a onclick="share()" class="modal-close waves-effect waves-green green-text btn-flat">Enviar</a>
-    </div>
+	<input id="articleId" type="hidden" value="<%= id %>">
+	<div class="modal-content">
+		<div class="input-field">
+			<textarea id="message" class="materialize-textarea"></textarea>
+			<label for="message">Escriba un texto para compartir</label>
+		</div>
+		<ul class="collection one-line preview">
+			<li class="collection-item avatar">
+				<i class="fas fa-newspaper material-icons circle"></i>
+				<span class="title"><%= teaser(description) %></span>
+			</li>
+		</ul>
+	</div>
+	<div class="modal-footer">
+		<a href="#!" class="modal-close waves-effect waves-light btn-flat">Cerrar</a>
+		<a onclick="share()" class="modal-close waves-effect waves-green green-text btn-flat">Enviar</a>
+	</div>
 </div>
 
 <!-- COMMENT MODAL -->
 
 <div id="commentModal" class="modal bottom-sheet fullscreen">
-    <input id="articleId" type="hidden" value="<%= id %>">
-    <input id="username" type="hidden" value="<%= username %>">
-    <input id="gender" type="hidden" value="<%= gender %>">
-    <input id="avatar" type="hidden" value="<%= avatar %>">
-    <input id="avatarColor" type="hidden" value="<%= avatarColor %>">
+	<input id="articleId" type="hidden" value="<%= id %>">
+	<input id="username" type="hidden" value="<%= username %>">
+	<input id="gender" type="hidden" value="<%= gender %>">
+	<input id="avatar" type="hidden" value="<%= avatar %>">
+	<input id="avatarColor" type="hidden" value="<%= avatarColor %>">
 
-    <div class="modal-content">
-        <div class="input-field">
-            <textarea id="comment" class="remainder materialize-textarea" maxlength="250"></textarea>
-            <label for="comment">¿En qué piensas? <span class="counter">0</span>/250</label>
-        </div>
+	<div class="modal-content">
+		<div class="input-field">
+			<textarea id="comment" class="remainder materialize-textarea" maxlength="250"></textarea>
+			<label for="comment">¿En qué piensas? <span class="counter">0</span>/250</label>
+		</div>
 
-        <div class="tags" style="margin-bottom: 10px">
-            <% var uniqueUsernames = [username]; %>
-            <% comments.forEach(function(comment) { %>
-                <% if(uniqueUsernames.indexOf(comment.username) === -1){ %>
-                    <% uniqueUsernames.push(comment.username) %>
-                    <span class="chip tiny" onclick="replyUser('<%= comment.username %>')">
-                        @<%= comment.username %>
-                    </span>
-                <% } %>
-            <% }) %>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <a href="#!" class="modal-close waves-effect btn-flat">Cerrar</a>
-        <a href="#!" class="modal-close waves-effect green-text btn-flat" onclick="comment()">Comentar</a>
-    </div>
+		<div class="tags" style="margin-bottom: 10px">
+			<% var uniqueUsernames = [username]; %>
+			<% comments.forEach(function(comment) { %>
+				<% if(uniqueUsernames.indexOf(comment.username) === -1){ %>
+					<% uniqueUsernames.push(comment.username) %>
+					<span class="chip tiny" onclick="replyUser('<%= comment.username %>')">
+						@<%= comment.username %>
+					</span>
+				<% } %>
+			<% }) %>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<a href="#!" class="modal-close waves-effect btn-flat">Cerrar</a>
+		<a href="#!" class="modal-close waves-effect green-text btn-flat" onclick="comment()">Comentar</a>
+	</div>
 </div>

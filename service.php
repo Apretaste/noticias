@@ -227,9 +227,7 @@ class Service
 		$article->comments = Database::query("
 			SELECT 
 				A.id, A.content, A.inserted, A.likes, A.unlikes, B.username, B.avatar, B.avatarColor, B.gender,
-				IF(A.id_person = {$request->person->id}, 'right', 'left') AS position,
-				(SELECT COUNT(comment) FROM _news_comments_actions WHERE comment=A.id AND A.id_person='{$request->person->id}' AND action='like') > 0 AS liked,
-				(SELECT COUNT(comment) FROM _news_comments_actions WHERE comment=A.id AND A.id_person='{$request->person->id}' AND action='unlike') > 0 AS unliked
+				IF(A.id_person = {$request->person->id}, 'right', 'left') AS position
 			FROM _news_comments A 
 			LEFT JOIN person B ON A.id_person = B.id 
 			WHERE A.id_article='{$article->id}' 
@@ -335,9 +333,7 @@ class Service
 				A.id, A.id_article, A.content, A.inserted, A.likes, A.unlikes,
 				B.username, B.avatar, B.avatarColor, B.gender,
 				C.title, C.pubDate, C.author, D.caption AS mediaCaption,
-				IF(A.id_person = {$request->person->id}, 'right', 'left') AS position,
-				(SELECT COUNT(comment) FROM _news_comments_actions WHERE comment=A.id AND A.id_person='{$request->person->id}' AND action='like') > 0 AS liked,
-				(SELECT COUNT(comment) FROM _news_comments_actions WHERE comment=A.id AND A.id_person='{$request->person->id}' AND action='unlike') > 0 AS unliked
+				IF(A.id_person = {$request->person->id}, 'right', 'left') AS position
 			FROM _news_comments A 
 			LEFT JOIN person B ON A.id_person = B.id 
 			LEFT JOIN _news_articles C ON C.id = A.id_article
