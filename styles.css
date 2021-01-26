@@ -198,7 +198,8 @@ ul.chat li {
 	color: #ec407a !important;
 }
 
-/* Comments actions */
+/* COMMENTS ACTIONS */
+
 .chat .actions {
 	margin-bottom: -5px;
 }
@@ -213,4 +214,8 @@ ul.chat li {
 
 .chat .right .actions .chip {
 	color: #eceff1;
+}
+
+.spacing {
+	margin-right: 5px;
 }
