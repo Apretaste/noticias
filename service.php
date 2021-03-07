@@ -180,14 +180,6 @@ class Service
 	 */
 	public function _historia(Request $request, Response $response)
 	{
-		// get the media selected as prefered
-		$preferredMedia = self::getSelectedMedia($request->person);
-
-		// force users to select media
-		if (empty($preferredMedia)) {
-			return $this->_medios($request, $response);
-		}
-
 		// get link to the article
 		$id = $request->input->data->id ?? false;
 
