@@ -135,7 +135,13 @@ class Service
 
 			if ($article->image) {
 				// get the path to the image
-				$imgPath = Bucket::download($article->mediaName, $article->image);
+				$imgPath = false;
+
+				try {
+					$imgPath = Bucket::download($article->mediaName, $article->image);
+				} catch(Exception $e) {
+
+				}
 
 				// if the image exists, pull it
 				if (file_exists($imgPath)) {
@@ -217,7 +223,11 @@ class Service
 		// get the image, if exists
 		$images = [];
 		if ($article->image) {
-			$images[] = Bucket::download($article->mediaName, $article->image);
+			try {
+				$images[] = Bucket::download($article->mediaName, $article->image);
+			} catch(Exception $e) {
+
+			}
 		}
 
 		// get the comments of the article
