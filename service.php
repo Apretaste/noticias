@@ -155,7 +155,9 @@ class Service
 					if ($info['http_code'] ?? 404 === 200 && !empty($image)) {
 						$fileName = Utils::randomHash();
 						$imgPath = Images::saveBase64Image(base64_encode($image), TEMP_PATH . $fileName);
-						Bucket::save($article->mediaName, $imgPath);
+						$fileName = basename($imgPath);
+						if (stripos($fileName, '.') === false) $fileName .= '.jpg';
+						Bucket::save($article->mediaName, $imgPath, $fileName);
 					}
 				}
 
