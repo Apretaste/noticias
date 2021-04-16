@@ -1,5 +1,7 @@
 <?php
 
+use Apretaste\Bucket;
+use Apretaste\Images;
 use Apretaste\Level;
 use Apretaste\Person;
 use Apretaste\Request;
@@ -7,6 +9,7 @@ use Apretaste\Response;
 use Apretaste\Tutorial;
 use Apretaste\Challenges;
 use Apretaste\Notifications;
+use Apretaste\Utils;
 use Framework\Crawler;
 use Framework\Database;
 use Framework\GoogleAnalytics;
@@ -132,7 +135,13 @@ class Service
 
 			if ($article->image) {
 				// get the path to the image
-				$imgPath = SHARED_PUBLIC_PATH . "content/news/{$article->mediaName}/images/{$article->image}";
+				$imgPath = false;
+
+				try {
+					$imgPath = Bucket::download($article->mediaName, $article->image);
+				} catch(Exception $e) {
+
+				}
 
 				// if the image exists, pull it
 				if (file_exists($imgPath)) {
@@ -144,7 +153,11 @@ class Service
 
 					// save the image downloaded
 					if ($info['http_code'] ?? 404 === 200 && !empty($image)) {
-						file_put_contents($imgPath, $image);
+						$fileName = Utils::randomHash();
+						$imgPath = Images::saveBase64Image(base64_encode($image), TEMP_PATH . $fileName);
+						$fileName = basename($imgPath);
+						if (stripos($fileName, '.') === false) $fileName .= '.jpg';
+						Bucket::save($article->mediaName, $imgPath, $fileName);
 					}
 				}
 
@@ -212,7 +225,11 @@ class Service
 		// get the image, if exists
 		$images = [];
 		if ($article->image) {
-			$images[] = SHARED_PUBLIC_PATH . "content/news/{$article->mediaName}/images/{$article->image}";
+			try {
+				$images[] = Bucket::download($article->mediaName, $article->image);
+			} catch(Exception $e) {
+
+			}
 		}
 
 		// get the comments of the article
