@@ -119,7 +119,7 @@ class Service
 			FROM _news_articles A 
 			LEFT JOIN _news_media B ON A.media_id = B.id 
 			LEFT JOIN _news_categories C ON A.category_id = C.id 
-			WHERE 1 $filters
+			WHERE B.active=true $filters
 			ORDER BY pubDate DESC 
 			LIMIT 20 OFFSET $offset");
 
@@ -168,7 +168,7 @@ class Service
 		}
 
 		// search for the media available
-		$availableMedia = Database::queryCache("SELECT id, caption, `type` FROM _news_media");
+		$availableMedia = Database::queryCache("SELECT id, caption, `type` FROM _news_media WHERE active=true");
 
 		// create content for the view
 		$content = [
@@ -307,7 +307,7 @@ class Service
 		$preferredMedia = self::getSelectedMedia($request->person);
 
 		// get the list of media
-		$availableMedia = Database::queryCache("SELECT * FROM _news_media");
+		$availableMedia = Database::queryCache("SELECT * FROM _news_media WHERE active=true");
 
 		// create content for the view
 		$content = [
@@ -347,6 +347,7 @@ class Service
 			LEFT JOIN person B ON A.id_person = B.id 
 			LEFT JOIN _news_articles C ON C.id = A.id_article
 			LEFT JOIN _news_media D ON D.id = C.media_id 
+			WHERE D.active=true
 			ORDER BY A.inserted DESC LIMIT 20");
 
 		// decode title for the comments
