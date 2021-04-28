@@ -167,16 +167,11 @@ class Service
 			}
 		}
 
-		// search for the media available
-		$availableMedia = Database::queryCache("SELECT id, caption, `type` FROM _news_media WHERE active=true");
-
 		// create content for the view
 		$content = [
 			'articles' => $articles,
 			'page' => $currentPage,
 			'pages' => $totalPages,
-			'availableMedia' => $availableMedia,
-			'mediaTypes' => self::$mediaTypes,
 			'searchTags' => $searchTags,
 		];
 
@@ -293,6 +288,28 @@ class Service
 		// send info to the view
 		$response->setCache('year');
 		$response->setTemplate('historia.ejs', $article, $images);
+	}
+
+	/**
+	 * Opens the search screen
+	 *
+	 * @param Request $request
+	 * @param Response $response
+	 */
+	public function _buscar(Request $request, Response $response)
+	{
+		// search for the media available
+		$availableMedia = Database::queryCache("SELECT id, caption, `type` FROM _news_media WHERE active=true");
+
+		// create content for the view
+		$content = [
+			'availableMedia' => $availableMedia,
+			'mediaTypes' => self::$mediaTypes
+		];
+
+		// send data to the view
+		$response->setCache('year');
+		$response->setTemplate('buscar.ejs', $content);
 	}
 
 	/**

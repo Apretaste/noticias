@@ -104,58 +104,7 @@
 <div class="bottom-space"></div>
 
 <div class="fixed-action-btn">
-	<a class="btn-floating btn-large green modal-trigger" href="#searchModal">
+	<a class="btn-floating btn-large green" href="#!" onclick="apretaste.send({command:'NOTICIAS BUSCAR'})">
 		<i class="large material-icons">search</i>
 	</a>
-</div>
-
-<!-- SEARCH MODAL -->
-
-<div id="searchModal" class="modal bottom-sheet fullscreen">
-	<div class="modal-content">
-		<div class="input-field">
-			<input id="title" type="text">
-			<label for="title">Titular</label>
-		</div>
-
-		<div class="input-field">
-			<select id="type">
-				<option value="all" selected>Todos</option>
-				<% Object.keys(mediaTypes).forEach(function(key){ %>
-					<option value="<%= key %>"><%= mediaTypes[key] %></option>
-				<% }) %>
-			</select>
-			<label for="type">Categoría</label>
-		</div>
-
-		<div class="input-field">
-			<select id="media">
-				<option value="all" selected>Todos</option>
-				<% availableMedia.forEach(function(media){ %>
-					<option value="<%= media.id %>"><%= media.caption %></option>
-				<% }) %>
-			</select>
-			<label for="media">Medio de Prensa</label>
-		</div>
-
-		<div class="input-field">
-			<input id="minComments" type="number">
-			<label for="minComments">Número de comentarios mínimos</label>
-		</div>
-
-		<div class="input-field">
-			<input id="maxDate" type="date" class="datepicker">
-			<label for="maxDate">Publicado antes de</label>
-		</div>
-
-		<div class="input-field">
-			<input id="minDate" type="date" class="datepicker">
-			<label for="minDate">Publicado después de</label>
-		</div>
-	</div>
-
-	<div class="modal-footer">
-		<a href="#!" class="modal-close waves-effect btn-flat">Cerrar</a>
-		<a href="#!" class="waves-effect green-text btn-flat" onclick="searchArticles()">Buscar</a>
-	</div>
 </div>
