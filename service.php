@@ -1,18 +1,18 @@
 <?php
 
+use Apretaste\Level;
+use Apretaste\Utils;
+use Apretaste\Person;
 use Apretaste\Bucket;
 use Apretaste\Images;
-use Apretaste\Level;
-use Apretaste\Person;
+use Apretaste\Crawler;
 use Apretaste\Request;
 use Apretaste\Response;
+use Apretaste\Database;
 use Apretaste\Tutorial;
 use Apretaste\Challenges;
 use Apretaste\Notifications;
-use Apretaste\Utils;
-use Framework\Crawler;
-use Framework\Database;
-use Framework\GoogleAnalytics;
+use Apretaste\GoogleAnalytics;
 
 class Service
 {
@@ -135,18 +135,14 @@ class Service
 
 			if ($article->image) {
 				// get the path to the image
-				$imgPath = false;
-
-				try {
-					$imgPath = Bucket::download($article->mediaName, $article->image);
-				} catch(Exception $e) {
-
-				}
+				$imgPath = Bucket::getPathByEnvironment($article->mediaName, $article->image);
 
 				// if the image exists, pull it
 				if (file_exists($imgPath)) {
 					$image = file_get_contents($imgPath);
-				} // if the image do not exist...
+				} 
+
+				// if the image do not exist...
 				else {
 					// try to get it from the internet
 					$image = Crawler::get($article->imageLink, 'GET', null, [], [], $info);
@@ -220,11 +216,7 @@ class Service
 		// get the image, if exists
 		$images = [];
 		if ($article->image) {
-			try {
-				$images[] = Bucket::download($article->mediaName, $article->image);
-			} catch(Exception $e) {
-
-			}
+			$images[] = Bucket::getPathByEnvironment($article->mediaName, $article->image);
 		}
 
 		// get the comments of the article
