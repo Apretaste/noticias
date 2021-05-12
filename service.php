@@ -133,33 +133,9 @@ class Service
 			// get the list of tags as an array
 			$article->tags = $article->tags ? explode(',', $article->tags) : [];
 
+			// get the path to the image
 			if ($article->image) {
-				// get the path to the image
-				$imgPath = Bucket::getPathByEnvironment($article->mediaName, $article->image);
-
-				// if the image exists, pull it
-				if (file_exists($imgPath)) {
-					$image = file_get_contents($imgPath);
-				} 
-
-				// if the image do not exist...
-				else {
-					// try to get it from the internet
-					$image = Crawler::get($article->imageLink, 'GET', null, [], [], $info);
-
-					// save the image downloaded
-					if ($info['http_code'] ?? 404 === 200 && !empty($image)) {
-						$fileName = Utils::randomHash();
-						$imgPath = Images::saveBase64Image(base64_encode($image), TEMP_PATH . $fileName);
-						$fileName = basename($imgPath);
-						if (stripos($fileName, '.') === false) $fileName .= '.jpg';
-						Bucket::save($article->mediaName, $imgPath, $fileName);
-					}
-				}
-
-				// unless there was an error, pull the image
-				if (empty($image)) $article->image = false;
-				else $images[] = $imgPath;
+				$images[] = Bucket::getPathByEnvironment($article->mediaName, $article->image);
 			}
 		}
 
