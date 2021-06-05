@@ -146,6 +146,7 @@ function share(id, text) {
 		data: {
 			text: message,
 			image: '',
+			action: 'news-share',
 			link: {
 				command: btoa(JSON.stringify({
 					command: 'NOTICIAS HISTORIA',
