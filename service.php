@@ -192,7 +192,7 @@ class Service
 		// get the image, if exists
 		$images = [];
 		if ($article->image) {
-			$images[] = Bucket::getPathByEnvironment($article->mediaName, $article->image);
+			$images[] = Bucket::get($article->mediaName, $article->image);
 		}
 
 		// get the comments of the article
