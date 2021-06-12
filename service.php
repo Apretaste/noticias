@@ -111,7 +111,7 @@ class Service
 		$offset = $currentPage > 1 ? ($currentPage - 1) * 20 : 0;
 
 		// pull the articles to show
-		$articles = Database::queryCache("
+		$articles = Database::query("
 			SELECT 
 				A.id, A.title, A.pubDate, A.author, A.image, A.imageLink, A.media_id,
 				A.description, A.comments, A.tags, B.name AS mediaName, 
