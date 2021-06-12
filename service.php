@@ -17,7 +17,7 @@ use Apretaste\GoogleAnalytics;
 class Service
 {
 	// list of media types
-	public static array $mediaTypes = ['politics' => 'Política', 'economy' => 'Economía', 'cultural' => 'Cultura', 'fashion' => 'Moda', 'technology' => 'Tecnología', 'science' => 'Ciencia', 'other' => 'Otros'];
+	public static array $mediaTypes = ['politics' => 'Política', 'economy' => 'Economía', 'cultural' => 'Cultura', 'fashion' => 'Moda', 'technology' => 'Tecnología', 'science' => 'Ciencia', 'other' => 'Otros', 'sports' => 'Deportes'];
 
 	/**
 	 * Get the list of news
