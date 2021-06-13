@@ -189,6 +189,10 @@ class Service
 		$article->content = quoted_printable_decode(strip_tags($article->content,'<h1><h2><b><i><u><span><p>'));
 		$article->imageCaption = quoted_printable_decode($article->imageCaption);
 
+		if (empty($article->description)) {
+			$article->description = substr(trim(strip_tags($article->content)),0,200)."...";
+		}
+
 		// get the image, if exists
 		$images = [];
 		if ($article->image) {
