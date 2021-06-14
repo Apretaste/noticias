@@ -296,7 +296,7 @@ class Service
 		$preferredMedia = self::getSelectedMedia($request->person);
 
 		// get the list of media
-		$availableMedia = Database::queryCache("SELECT * FROM _news_media WHERE active=true");
+		$availableMedia = Database::query("SELECT * FROM _news_media WHERE active=true");
 
 		// create content for the view
 		$content = [
