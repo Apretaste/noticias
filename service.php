@@ -185,7 +185,7 @@ class Service
 
 		// decode basic tags
 		$article->title = quoted_printable_decode($article->title);
-		$article->description = quoted_printable_decode($article->description);
+		$article->description = html_entity_decode(quoted_printable_decode($article->description));
 		$article->content = quoted_printable_decode(strip_tags($article->content,'<h1><h2><b><i><u><span><p>'));
 		$article->imageCaption = quoted_printable_decode($article->imageCaption);
 
