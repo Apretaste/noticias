@@ -53,7 +53,7 @@ class Service
 			$filters = "AND A.media_id IN($preferredMedia)";
 
 			// calculate total number of pages
-			$totalPages = Database::queryCache("SELECT COUNT(id) AS total FROM _news_articles WHERE media_id IN($preferredMedia)")[0]->total;
+			$totalPages = Database::query("SELECT COUNT(id) AS total FROM _news_articles WHERE media_id IN($preferredMedia)")[0]->total;
 			$totalPages = intval($totalPages / 20) + ($totalPages % 20 > 0 ? 1 : 0);
 		} // if searching...
 		else {
@@ -74,7 +74,7 @@ class Service
 						$filters .= "AND MATCH(`title`) AGAINST('$escapedTitle') ";
 						break;
 					case 'media':
-						$mediaCaption = Database::queryCache("SELECT caption FROM _news_media WHERE id='$value'", Database::CACHE_YEAR);
+						$mediaCaption = Database::query("SELECT caption FROM _news_media WHERE id='$value'", Database::CACHE_YEAR);
 						if (!empty($mediaCaption)) $searchTags[] = $mediaCaption[0]->caption;
 						$filters .= "AND A.media_id = '$value' ";
 						break;
@@ -95,7 +95,7 @@ class Service
 						$filters .= "AND B.type = '$value' ";
 						break;
 					case 'category':
-						$categoryCaption = Database::queryCache("SELECT caption FROM _news_categories WHERE id='$value'", Database::CACHE_YEAR);
+						$categoryCaption = Database::query("SELECT caption FROM _news_categories WHERE id='$value'", Database::CACHE_YEAR);
 						if (!empty($categoryCaption)) $searchTags[] = $categoryCaption[0]->caption;
 						$filters .= "AND A.category_id = '$value' ";
 						break;
@@ -121,7 +121,7 @@ class Service
 			LEFT JOIN _news_categories C ON A.category_id = C.id 
 			WHERE B.active=true $filters
 			ORDER BY pubDate DESC 
-			LIMIT 20 OFFSET $offset");
+			LIMIT 50 OFFSET $offset");
 
 		// format articles
 		foreach ($articles as $article) {
