@@ -11,7 +11,7 @@
 
 		<!-- DESCRIPTION -->
 		<% if(description.trim().substr(0, 100) != content.split("\\n\\n")[0].substr(0, 100)) { %>
-			<blockquote><%= description %></blockquote>
+			<blockquote><%- description %></blockquote>
 		<% } %>
 
 		<!-- CONTENT -->
