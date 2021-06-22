@@ -190,7 +190,7 @@ class Service
 		$article->imageCaption = quoted_printable_decode($article->imageCaption);
 
 		if (empty($article->description)) {
-			$article->description = substr(trim(strip_tags($article->content)),0,200)."...";
+			$article->description = mb_substr(trim(strip_tags($article->content)),0,200)."...";
 		}
 
 		// get the image, if exists
