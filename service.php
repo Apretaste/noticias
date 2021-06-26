@@ -113,7 +113,7 @@ class Service
 		// pull the articles to show
 		$articles = Database::query("
 			SELECT 
-				DISTINCT A.id, A.title, A.pubDate, A.author, A.image, A.imageLink, A.media_id,
+				A.id, A.title, A.pubDate, A.author, A.image, A.imageLink, A.media_id,
 				A.description, A.comments, A.tags, B.name AS mediaName, 
 				B.caption AS mediaCaption, C.caption AS categoryCaption
 			FROM _news_articles A 
@@ -142,7 +142,7 @@ class Service
 		// reduce duplicated
 		$reduce = [];
 		foreach ($articles as $article) {
-			$reduce[$article->media_id.'-'.$article->title] = $article;
+			$reduce[md5($article->media_id.'-'.$article->title)] = $article;
 		}
 		$articles = $reduce;
 
