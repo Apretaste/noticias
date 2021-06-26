@@ -124,6 +124,7 @@ class Service
 			LIMIT 50 OFFSET $offset");
 
 		// format articles
+		$reduce = [];
 		foreach ($articles as $article) {
 			// decode basic tags
 			$article->title = quoted_printable_decode($article->title);
@@ -137,14 +138,12 @@ class Service
 			if ($article->image) {
 				$images[] = Bucket::getPathByEnvironment($article->mediaName, $article->image);
 			}
+
+			//$reduce[md5($article->media_id.'-'.$article->title)] = $article;
+			$reduce[md5($article->title)] = $article;
 		}
 
-		// reduce duplicated
-		$reduce = [];
-		foreach ($articles as $article) {
-			$reduce[md5($article->media_id.'-'.$article->title)] = $article;
-		}
-		$articles = $reduce;
+//		$articles = $reduce;
 
 		// create content for the view
 		$content = [
@@ -155,7 +154,7 @@ class Service
 		];
 
 		// send data to the view
-		$response->setCache('day');
+		// $response->setCache('day');
 		$response->setTemplate("titulares.ejs", $content, $images);
 	}
 
