@@ -125,6 +125,7 @@ class Service
 
 		// format articles
 		$reduce = [];
+		$last_title = '';
 		foreach ($articles as $article) {
 			// decode basic tags
 			$article->title = quoted_printable_decode($article->title);
@@ -139,15 +140,15 @@ class Service
 				$images[] = Bucket::getPathByEnvironment($article->mediaName, $article->image);
 			}
 
-			//$reduce[md5($article->media_id.'-'.$article->title)] = $article;
-			$reduce[md5($article->title)] = $article;
-		}
+			if (!empty($article->title) && $last_title !== $article->title)
+				$reduce[] = $article;
 
-//		$articles = $reduce;
+			$last_title = $article->title;
+		}
 
 		// create content for the view
 		$content = [
-			'articles' => $articles,
+			'articles' => $reduce,
 			'page' => $currentPage,
 			'pages' => $totalPages,
 			'searchTags' => $searchTags,
