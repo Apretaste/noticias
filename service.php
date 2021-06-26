@@ -139,6 +139,13 @@ class Service
 			}
 		}
 
+		// reduce duplicated
+		$reduce = [];
+		foreach ($articles as $article) {
+			$reduce[$article->media_id.'-'.$article->title] = $article;
+		}
+		$articles = $reduce;
+
 		// create content for the view
 		$content = [
 			'articles' => $articles,
